@@ -1,14 +1,14 @@
-# Teammate 3: basic Gemini workflow
+# NivaWatt teammate 3: basic Gemini workflow v0.2
 
 You are responsible for hardware preparation, independent testing and evidence. You do not need a terminal coding agent. Your name and GitHub handle have not been assumed; Rohan can fill them in later.
 
-## Paste this into your existing Gemini chat
+Read NIVAWATT_BUILD_NOW.md first. It is the complete current execution reference, including evidence gates and copy-paste starts.\n\n## Paste this into your existing Gemini chat
 
-Help me carry out the hardware-preparation and validation role for oxydevelopers/adaptiveflow. I have basic Gemini chat, not a terminal agent. Read the project context below and guide me in small practical steps. Do not claim to have operated my computer, wired hardware, run code or verified measurements.
+Help me carry out the hardware-preparation and validation role for oxydevelopers/nivawatt. I have basic Gemini chat, not a terminal agent. Read the project context below and guide me in small practical steps. Do not claim to have operated my computer, wired hardware, run code or verified measurements.
 
-Our actual project is Adaptive Pump and EV Scheduling for Apartment Peak Demand Reduction. Software proposes pump/charging schedules; a manager accepts and manually operates equipment; sensors check execution and trigger revised recommendations. This is not FDIA auditing or a BESS project. The operator/BESCOM view is simulated.
+Our project is NivaWatt: Forecast-Informed Apartment Demand Response with Measured Execution Feedback. Regional demand history supports a forecast and an operator-approved peak advisory. Software then proposes apartment pump/charging schedules; a manager accepts and manually operates equipment; sensors check execution and trigger revised recommendations. This is not FDIA auditing or a BESS project. The operator/BESCOM view is simulated.
 
-Rohan/Claude owns core/backend/scheduler/firmware review. Sonia/Claude owns web interfaces. I own hardware/, validation/, scenarios/ under the provided schema, and presentation/. I should not edit their implementation or contract.
+Rohan/Claude owns data validation, demand forecasting, core/backend/scheduler/firmware review. Sonia/Claude owns web interfaces. I own hardware/, validation/, scenarios/ under the provided schema, and presentation/. I should not edit their implementation or contract.
 
 My first task: prepare hardware/INVENTORY.md recording exact part markings, quantity, supply ratings, existing condition and what is missing. Available items must be confirmed by me; do not assume catalogue specifications from a photograph or propose paid purchases. Ask only necessary questions.
 
@@ -27,13 +27,13 @@ Next, help me prepare scenario steps in validation/SCENARIOS.md: normal operatio
 
 Use TEST_AND_DEMO.md supplied by Rohan as the acceptance reference. For each test record exact steps, expected result, actual result, run ID/commit and screenshot/log filename. Never fabricate a pass or a performance percentage. If I cannot run it yet, mark NOT RUN.
 
-Finally help me prepare a two-minute explanation: problem, actual sensor-to-manager loop, measured-vs-acknowledged execution experiment, real results, simulated elements, and limitations. No first-ever claim, transformer protection, unmeasured financial savings, utility integration, or trained-ML claim.
+Also prepare an actual BOM with exact model, quantity, dated price/source, replacement cost, college-provided quantity and additional cash required. College provision is not zero replacement cost. Do not invent a total.\n\nFinally help me explain the complete data/forecast/advisory/apartment/measurement loop, measured-vs-acknowledged experiment, actual results and limitations. Forecasting may use an actually fitted local regression, but a fixture is not evidence of training. No first-ever claim, transformer protection, unmeasured financial savings, utility integration or unsupported model accuracy.
 
 Give me concise Markdown files I can save/upload manually. Basic Gemini cannot push commits itself. Do not keep researching broadly; focus on inventory, exact component references, calibration, test execution and evidence.
 
 ## Manual GitHub workflow
 
-1. Open https://github.com/oxydevelopers/adaptiveflow while signed into your own account.
+1. Open https://github.com/oxydevelopers/nivawatt while signed into your own account.
 2. If you cannot view or contribute, tell Rohan; do not use another person's credentials.
 3. Use Add file -> Create new file for hardware/INVENTORY.md, hardware/CALIBRATION.md or validation/SCENARIOS.md. Paste only material you checked.
 4. Choose a new branch/PR, preferably feature/hardware-validation; do not commit to main behind the other developers.

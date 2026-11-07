@@ -1,10 +1,20 @@
-# Acceptance checks and demonstration
+# NivaWatt acceptance checks and demonstration v0.2
 
 Status: planned checks, not execution evidence. Record real commands/results and run IDs as work lands. Meaningful core checks are required; no test suite is claimed to exist yet.
 
-## P0 gate: first complete loop
+## Forecast/advisory gate
 
-1. Create one explicitly synthetic run with a pump, tank, one EV request, a feasible allowance and no outage. Record parameter units and interval duration.
+Validate actual dataset source/scope, timestamps, units, nulls/duplicates, coverage and attribution. Record exact train/validation/test dates and fingerprint. Hold out future data and account for available-at-issue-time assumptions. Report unvalidated publication lag.
+
+Compare a seasonal baseline and, when fitted, one small regression on held-out demand error and top-three peak-hour overlap. Forecast values remain hourly. A saved replay is not a live BESCOM connection.
+
+Create an immutable forecast snapshot, approve an advisory as the operator, and display the same identifiers/windows on both views. A manager cannot issue a utility advisory or derive/change a cap from regional MW. Forecast replacement alone cannot silently alter an active advisory.
+
+Test empty/missing datasets, invalid chronology, unknown model, unauthorized approval, expired advisory and repeated request IDs. Synthetic fallback unblocks integration but does not pass the real-data gate.
+
+## P0 gate: first complete apartment loop
+
+1. Create one explicitly synthetic apartment run with a pump, tank, one EV request, a feasible participating-load allowance and no outage. Connect an operator-approved advisory; forecast/bench provenance remains separate. Record parameter units and interval duration.
 2. Backend computes one option; phone displays it with source and expiry. Its trajectories must respect physical bounds and show any service shortfalls.
 3. Manager accepts the exact option/version. Backend records ACCEPTED without observed execution.
 4. Manager claims done but actual simulated switch state stays unchanged. Observations arrive independently of the claim.
@@ -48,9 +58,13 @@ Metric definitions:
 
 Hardware: record calibration and real dt, then a genuine successful run plus missed action and sensor-loss cases. Physical comparisons require matched separate trials. Shadow alternatives on one bench are simulated, clearly labelled.
 
+## Forecast and comparison evidence
+
+Include forecast source/scope and held-out baseline comparison alongside the execution experiment. Use an evaluation horizon that includes deferred work/deadlines, total delivered energy and final tank state. Load shedding cannot masquerade as successful shifting. Do not fabricate bill or emissions benefits from peak shifting alone.
+
 ## Five-minute explanation (adapt to actual implemented features)
 
-0:00–0:45: explain participating circuits and simulated operator allowance; show proposal and manager acceptance.
+0:00–0:45: show saved regional forecast/source and operator-approved advisory, explain participating circuits/allowance, then show the apartment proposal and acceptance.
 
 0:45–1:45: claim done while leaving a switch unchanged. Show what measurements establish and any ambiguity, then the pending revision. Acceptance alone must not change measured power.
 

@@ -1,51 +1,63 @@
-# AdaptiveFlow — start here
+# NivaWatt
 
-**Adaptive Pump and EV Scheduling for Apartment Peak Demand Reduction**
+**Forecast-Informed Apartment Demand Response with Measured Execution Feedback**
 
-This repository currently contains a planning and coordination pack. It does not yet contain a verified application, hardware integration, or measured performance results. Prepared 7 November 2026 for a three-person sprint.
+**Latest planning revision: v0.2, 7 November 2026.** Start with [NIVAWATT_BUILD_NOW.md](NIVAWATT_BUILD_NOW.md), the complete execution plan and copy-paste role prompts. This replaces the earlier apartment-only scope.
 
-## Team and reading order
+Historical regional demand informs a forecast. A demonstration operator approves a peak advisory. An apartment coordinator schedules pump and charging-emulator activity, records human acceptance and claims, measures execution and proposes revisions when needed.
 
-| Person | Available assistant | Responsibility | First file |
-|---|---|---|---|
-| Rohan | Claude Code terminal; Codex support | Core logic, API, persistence, simulation, firmware review, integration | [PROMPT_ROHAN.md](PROMPT_ROHAN.md) |
-| Sonia | Claude Code terminal | Manager phone interface, operator view, API client, UI checks | [PROMPT_SONIA.md](PROMPT_SONIA.md) |
-| Teammate 3 (name not supplied) | Basic Gemini chat | Hardware inventory and measurements, scenario preparation, independent QA, presentation evidence | [GEMINI.md](GEMINI.md) |
+## Current status
 
-Everyone reads [AGENTS.md](AGENTS.md), [TEAM_WORKFLOW.md](TEAM_WORKFLOW.md), and [CONTRACT.md](CONTRACT.md). Run the acceptance checks in [TEST_AND_DEMO.md](TEST_AND_DEMO.md).
+This repository contains planning documents and synthetic shape fixtures. It does not yet contain a verified application, connected hardware, fitted forecasting model or measured benefit results. No live BESCOM integration is established. Forecasting is restored to the scope; it has not been implemented by this documentation update.
 
-**Target:** a usable local software demonstration in one focused 6–8-hour working session, with integration beginning within two hours. This is a target, not a completion guarantee. Physical assembly/calibration can continue afterward; never call simulated measurements hardware results.
+## Team starts
 
-## First actions
+| Person | First instructions | Owned work |
+|---|---|---|
+| Rohan, Claude Code | [PROMPT_ROHAN.md](PROMPT_ROHAN.md) | Forecasting, core/API, scheduler, simulation, firmware review and integration |
+| Sonia, Claude Code | [PROMPT_SONIA.md](PROMPT_SONIA.md) | Operator and apartment interfaces, API client and UI checks |
+| Third teammate, basic Gemini | [GEMINI.md](GEMINI.md) | Component inventory, calibration, independent testing, costs and evidence |
 
-1. Rohan confirms everyone can clone this repository, freezes contract v0.1 and publishes the initial core skeleton. The current machine's existing CampusResolve repository is unrelated; do not reuse its backend or change its remote.
-2. Sonia starts immediately against STATE_EXAMPLE.json and the contract. She does not wait for the solver, rewrite the API, or calculate final metrics in the browser.
-3. Teammate 3 inventories actual lab components, prepares the scenarios and follows the manual checklist. They do not need terminal-agent access to be useful.
-4. Integrate one proposal -> accept -> claimed done -> missed physical action -> observed deviation -> revised proposal -> measured outcome loop first.
-5. Add comparisons and the second simulated apartment only after that loop works.
+Read [AGENTS.md](AGENTS.md), [TEAM_WORKFLOW.md](TEAM_WORKFLOW.md), [CONTRACT.md](CONTRACT.md) and [TEST_AND_DEMO.md](TEST_AND_DEMO.md). Contract v0.2 is a proposed build target; no peer acceptance or test completion is implied.
 
-## Product boundary
+## Build gates
 
-This is advisory apartment demand response. Submeters support execution feedback. FDIA auditing, battery dispatch, new ML training, WhatsApp APIs, transformer protection and paid cloud services are outside the initial sprint. The BESCOM/operator interface is a **simulated coordination view**, with no claimed utility connection.
+1. Validate an attributed dataset and save a forecast snapshot. Approve a peak advisory.
+2. Connect that advisory to one software apartment and complete proposal, acceptance, claim, observation and revision.
+3. Connect calibrated physical pump/tank and charging-emulator measurements.
+4. Compare acknowledgement-based and measured-execution replanning against a sensible demand-cap rule and report service outcomes.
+5. Export evidence, costs and limitations before preparing the presentation.
 
-The existing project at https://github.com/Rohan-Ktksu/OutageReady-FlexProof may provide reusable source if a teammate has authorized access. Inspect it before importing selected modules and preserve provenance. Its current features/tests have not been verified for this new repository. Do not copy its entire Git history, configuration, or old assistant instructions blindly.
+Target a first connected software demonstration in a focused session. The 6-8-hour target is conditional; physical calibration and defensible evaluation may require a further session. Do not delay UI integration for elaborate forecasting or a solver.
 
-## Bootstrap commands
+## Data and demonstration boundaries
 
-Each person runs these on their own computer, using their own identity:
+The candidate KPTCL-derived archive documents hourly Karnataka grid demand, not BESCOM feeder or apartment demand. Validate the actual file and preserve attribution/licensing conditions before use: https://github.com/Vonter/kptcl-load-curve
+
+A regional forecast identifies peak hours. It does not establish local transformer capacity or automatically determine an apartment kW limit. A configured allowance applies to participating flexible loads unless broader measurement explicitly establishes otherwise.
+
+One low-voltage bench represents a pump/tank and EV charging load. A resistor/other load emulates electrical consumption, not an actual EV battery. Keep hardware W/Wh separate from model kW/kWh. Label synthetic data and simulated comparisons.
+
+## Fixtures
+
+[STATE_EXAMPLE.json](STATE_EXAMPLE.json) and [TELEMETRY_EXAMPLE.json](TELEMETRY_EXAMPLE.json) describe apartment/telemetry shapes. [FORECAST_EXAMPLE.json](FORECAST_EXAMPLE.json) and [ADVISORY_EXAMPLE.json](ADVISORY_EXAMPLE.json) add explicitly synthetic forecasting/advisory shapes. Fixture values are not experimental results.
+
+## Start in a separate clone
 
 ```powershell
-git clone https://github.com/oxydevelopers/adaptiveflow.git
-cd adaptiveflow
+git clone https://github.com/oxydevelopers/nivawatt.git
+cd nivawatt
 git config user.name
 git config user.email
 git status --short
 ```
 
-Do not share passwords/tokens or commit .env files. If GitHub authentication is needed, the human signs in on that computer. A coding-assistant subscription does not provide GitHub authentication or unlimited application inference.
+Read the branch/review instructions before beginning. If the latest plan is still in a PR, use that PR's branch deliberately; a normal clone checks out main. Each person uses their own verified Git identity and role branch. Do not change the remote or source of the unrelated CampusResolve checkout.
 
-Choose your branch from TEAM_WORKFLOW.md. After core exists, the intended startup is a single local Python service serving the API and web pages; Rohan must replace planned instructions with commands he actually tested. No application startup command is claimed to work in this planning-only commit.
+Rohan must publish startup commands he actually tests. This planning-only revision claims no working startup command. Keep credentials, runtime databases and environments outside Git. No paid APIs/services, background model bridges or automatic main merge.
 
-## Status discipline
+## Contribution and evidence
 
-Update only your own COORDINATION_*.md after a useful handoff: commit SHA, what works, commands actually run, failures and next task. Files become visible to peers only after push/fetch. No background model-to-model messaging, paid runners or polling bots. Each human must start and resume their own assistant.
+Our candidate contribution is measured-execution feedback for human-operated apartment response. Test it against acknowledgement-based replanning with fair information and service requirements. Forecasting, meters and scheduling methods are existing technologies. No first-ever, patent, savings, emissions or grid-protection claim is established by this plan.
+
+Existing OutageReady-FlexProof code may be selectively reused only after authorized inspection and provenance review. Record actual commands/results in each owner's coordination file. Do not copy an old repository's instructions or claim its charts as NivaWatt evidence.
