@@ -55,3 +55,8 @@ Use separate clones/branches. Fetch once when starting a handoff or integration;
 ## Completion
 
 Run affected checks from TEST_AND_DEMO.md, document actual results in your coordination file, commit only owned changes, push and open a focused PR. Do not spend the sprint writing extensive documentation, adding a new frontend framework, or building speculative infrastructure. Freeze features after the end-to-end gate and fix observed failures.
+
+
+## Smart-meter evidence update, 7 November 2026
+
+Read [SMART_METER_EVIDENCE.md](SMART_METER_EVIDENCE.md). Continue the working build with local branch sensing. Utility interval-data access, latency and load identification remain unverified integration assumptions. Aggregate consumption visibility is not branch execution proof. Add the aggregate-only, stale-data and pump-without-water cases to validation. Use existing API fields first; any new fields require Rohan/Sonia contract review. The evidence gap does not establish absence of utility functionality or novelty. Do not upload private bills or customer identifiers.
