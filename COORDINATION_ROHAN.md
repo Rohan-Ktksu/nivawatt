@@ -114,7 +114,7 @@ A single aggregate meter that is checked against claims catches most false EV cl
 
 ## Demo runbook: emulator as device, phone as manager (all readings synthetic)
 1. Laptop: `.venv\Scripts\python app.py --host 0.0.0.0`.
-2. Second terminal: `.venv\Scripts\python scriptsench_emulator.py --new-run --follow-plan --interactive`. It prints the run id, then waits at a prompt before each interval.
+2. Second terminal: `.venv\Scripts\python scripts\bench_emulator.py --new-run --follow-plan --interactive`. It prints the run id, then waits at a prompt before each interval.
 3. Operator page (opened via the laptop's Wi-Fi address): choose that run in the run picker, load the saved forecast, and approve and issue the advisory.
 4. Phone (manager link): accept the plan. Back at the emulator, press Enter. Readings arrive and the interval closes, and both pages show "Sensors agree".
 5. False done: tap done on the phone, then at the emulator prompt type `ev off` (or `pump off`) and press Enter. The phone shows "Sensors disagree" and a waiting proposal.
