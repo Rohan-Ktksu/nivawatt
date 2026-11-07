@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-11-07T06:16:11Z",
+  "kind": "historical timestamp-split backtest (publication lag unvalidated)",
+  "data_validation": {
+    "dataset_id": "kptcl-load-curve",
+    "source_name": "KPTCL daily load-curve reports, parsed by Vonter/kptcl-load-curve",
+    "source_url": "https://github.com/Vonter/kptcl-load-curve",
+    "original_reports": "https://loadcurve.kptcl.net/LoadCurveUpload/lcdownloadview.asp",
+    "license": "Open Database License (ODbL) 1.0; some contents copyright KPTCL. Raw file is not redistributed here.",
+    "geographic_scope": "Karnataka state grid (KPTCL). Not BESCOM feeder, transformer or apartment demand.",
+    "demand_unit": "MW",
+    "resolution_minutes": 60,
+    "timezone_assumption": "Report clock times assumed to be IST (UTC+05:30); converted to UTC by subtracting 5h30m.",
+    "dataset_fingerprint_sha256": "61538bc849335f960bac29dae1a33e8d25221cfc0e3284f832fda320555331ff",
+    "raw_rows": 135774,
+    "null_load_rows_removed": 0,
+    "implausible_load_rows_removed": 0,
+    "duplicate_timestamps": 5344,
+    "duplicate_timestamps_with_differing_values": 277,
+    "duplicate_rule": "When report hour 24 (day D) and hour 0 (day D+1) coincide, keep the hour-0 row.",
+    "first_observation_utc": "2010-12-31T18:30:00Z",
+    "last_observation_utc": "2026-08-19T18:30:00Z",
+    "expected_hours": 137041,
+    "present_hours": 130430,
+    "missing_hours": 6611,
+    "imputation": "none; days with any missing hour are excluded from training/evaluation targets",
+    "publication_lag": "UNVALIDATED. Evaluation is a historical timestamp-split backtest.",
+    "complete_ist_days": 5431
+  },
+  "split": {
+    "train": {
+      "first_day_start_utc": "2026-05-18T18:30:00Z",
+      "last_day_end_utc": "2026-07-14T18:30:00Z"
+    },
+    "validation": {
+      "first_day_start_utc": "2026-07-14T18:30:00Z",
+      "last_day_end_utc": "2026-08-03T18:30:00Z"
+    },
+    "test": {
+      "first_day_start_utc": "2026-08-03T18:30:00Z",
+      "last_day_end_utc": "2026-08-19T18:30:00Z"
+    },
+    "rule": "most recent usable complete IST days: 56 train / 14 validation / 14 test"
+  },
+  "input_availability": "inputs use lags >= 48 h; training targets end before D-1",
+  "ridge": {
+    "alpha_candidates": [
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ],
+    "validation": {
+      "0.1": {
+        "days": 14,
+        "mae_mw": 804.3,
+        "top3_peak_hour_overlap": 0.857
+      },
+      "1.0": {
+        "days": 14,
+        "mae_mw": 790.2,
+        "top3_peak_hour_overlap": 0.833
+      },
+      "10.0": {
+        "days": 14,
+        "mae_mw": 731.5,
+        "top3_peak_hour_overlap": 0.833
+      },
+      "100.0": {
+        "days": 14,
+        "mae_mw": 685.9,
+        "top3_peak_hour_overlap": 0.833
+      }
+    },
+    "selected_alpha": 100.0,
+    "refit_on": "train+validation",
+    "training_days": 70,
+    "features": "load lags 48/168/336 h, IST hour-of-day and day-of-week dummies"
+  },
+  "test": {
+    "seasonal_naive": {
+      "days": 14,
+      "mae_mw": 580.9,
+      "top3_peak_hour_overlap": 0.905
+    },
+    "ridge_lag_calendar": {
+      "days": 14,
+      "mae_mw": 540.0,
+      "top3_peak_hour_overlap": 0.929
+    }
+  },
+  "demo_date_rule": "forecast_start = start of the final test day (predeclared, not chosen for performance)",
+  "demo_forecast_start": "2026-08-18T18:30:00Z",
+  "note": "Peak-hour overlap uses top-3 hours per day, ties broken by earliest start."
+}

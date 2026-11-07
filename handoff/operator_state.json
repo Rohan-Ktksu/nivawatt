@@ -1,0 +1,112 @@
+{
+  "schema_version": "0.2",
+  "run_id": "run-621a868aae",
+  "revision": 4,
+  "clock": {
+    "interval_index": 2,
+    "model_dt_minutes": 15,
+    "horizon_intervals": 96,
+    "model_time_utc": "2026-08-18T19:00:00Z",
+    "clock_start_utc": "2026-08-18T18:30:00Z",
+    "source_kind": "synthetic"
+  },
+  "participating_scope": "pump + EV-charging emulator per apartment; background load unmetered (unknown)",
+  "apartments": [
+    {
+      "apartment_id": "APT_1",
+      "allowance_model_kw": 6.0,
+      "latest_aggregate_model_kw": 3.3,
+      "pending_proposals": 0,
+      "active_commitment_id": "c-1059655794",
+      "execution": {
+        "commitment_id": "c-1059655794",
+        "interval_index": 1,
+        "claim": "NO_CLAIM",
+        "observation_status": "OBSERVED_MATCH",
+        "reason": "",
+        "claims": [],
+        "next_action": {
+          "interval_index": 2,
+          "pump": "OFF",
+          "ev": "EV_1"
+        }
+      }
+    }
+  ],
+  "events": [
+    {
+      "advisory_id": "ev-8901de4529",
+      "event_id": "ev-8901de4529",
+      "kind": "peak_advisory",
+      "run_id": "run-621a868aae",
+      "forecast_id": "fc-1c712d1172",
+      "approved_by_demo_operator": "demo-operator",
+      "geographic_scope": "Karnataka state grid (KPTCL). Not BESCOM feeder, transformer or apartment demand.",
+      "valid_from": "2026-08-18T18:30:00Z",
+      "valid_until": "2026-08-19T18:30:00Z",
+      "peak_windows": [
+        {
+          "start": "2026-08-19T04:30:00Z",
+          "end": "2026-08-19T05:30:00Z"
+        },
+        {
+          "start": "2026-08-19T05:30:00Z",
+          "end": "2026-08-19T06:30:00Z"
+        },
+        {
+          "start": "2026-08-19T06:30:00Z",
+          "end": "2026-08-19T07:30:00Z"
+        }
+      ],
+      "target_apartments": [
+        "APT_1"
+      ],
+      "source_kind": "historical_replay",
+      "known_from_interval": 0,
+      "_note": "Prototype peak advisory from a regional forecast. Not a BESCOM instruction or a capacity limit.",
+      "issued_at": "2026-11-07T06:24:57Z",
+      "applied": true
+    }
+  ],
+  "forecast_id": "fc-1c712d1172",
+  "active_advisory": {
+    "advisory_id": "ev-8901de4529",
+    "event_id": "ev-8901de4529",
+    "kind": "peak_advisory",
+    "run_id": "run-621a868aae",
+    "forecast_id": "fc-1c712d1172",
+    "approved_by_demo_operator": "demo-operator",
+    "geographic_scope": "Karnataka state grid (KPTCL). Not BESCOM feeder, transformer or apartment demand.",
+    "valid_from": "2026-08-18T18:30:00Z",
+    "valid_until": "2026-08-19T18:30:00Z",
+    "peak_windows": [
+      {
+        "start": "2026-08-19T04:30:00Z",
+        "end": "2026-08-19T05:30:00Z"
+      },
+      {
+        "start": "2026-08-19T05:30:00Z",
+        "end": "2026-08-19T06:30:00Z"
+      },
+      {
+        "start": "2026-08-19T06:30:00Z",
+        "end": "2026-08-19T07:30:00Z"
+      }
+    ],
+    "target_apartments": [
+      "APT_1"
+    ],
+    "source_kind": "historical_replay",
+    "known_from_interval": 0,
+    "_note": "Prototype peak advisory from a regional forecast. Not a BESCOM instruction or a capacity limit.",
+    "issued_at": "2026-11-07T06:24:57Z"
+  },
+  "observation_coverage": {
+    "intervals_elapsed": 2,
+    "valid_observations": 2
+  },
+  "warnings": [
+    "SYNTHETIC apartment simulation. Not a field measurement.",
+    "Regional forecast and advisory do not establish local transformer or apartment capacity."
+  ]
+}
