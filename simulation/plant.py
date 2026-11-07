@@ -20,6 +20,12 @@ DEFAULT_PARAMS = {
     # branch: pump and EV branches metered separately; aggregate: one meter on the participating circuits.
     # The tank-level sensor is independent of either and is present in both.
     "observation_scope": "branch",
+    # simulator: the server's synthetic plant produces observations at each step.
+    # telemetry: a device (or the emulator) posts readings; each step closes the interval from them.
+    "observation_source": "simulator",
+    # Device units -> model units. 1.0 means the device meters apartment-scale circuits directly.
+    "telemetry_power_scale": 1.0,
+    "telemetry_volume_scale": 1.0,
     "ev_sessions": [{"ev_id": "EV_1", "arrival_interval": 0, "departure_interval": 32, "requested_model_kwh": 10}],
 }
 
@@ -45,6 +51,10 @@ def make_params(overrides=None):
         raise ValueError("withdrawal_profile_l length must equal horizon_intervals")
     if not 0 <= p["tank_min_l"] <= p["tank_max_l"] or not 0 <= p["tank_init_l"] <= p["tank_max_l"]:
         raise ValueError("tank bounds invalid")
+    if p["observation_source"] not in ("simulator", "telemetry"):
+        raise ValueError("observation_source must be simulator or telemetry")
+    if p["telemetry_power_scale"] <= 0 or p["telemetry_volume_scale"] <= 0:
+        raise ValueError("telemetry scales must be > 0")
     if p["observation_scope"] not in ("branch", "aggregate"):
         raise ValueError("observation_scope must be branch or aggregate")
     for k in ("pump_inflow_lph", "pump_model_kw", "ev_charger_model_kw", "allowance_model_kw"):

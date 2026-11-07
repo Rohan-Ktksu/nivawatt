@@ -653,6 +653,76 @@ def record_observation(r, obs):
     return {"commitment_id": c["commitment_id"], "interval_index": i, "observation_status": status, "reason": reason}
 
 
+def telemetry_observation(r, i):
+    """Close interval i from device readings received since the previous close (telemetry runs).
+
+    Raw bench values stay in raw_bench (W, Wh over actual device seconds); model values use explicit scales.
+    """
+    p = r["params"]
+    cursor = r["truth"].get("telemetry_cursor", 0)
+    rows = db.q("SELECT id, status, body FROM telemetry WHERE run_id=? AND id>? ORDER BY id", r["run_id"], cursor)
+    if rows:
+        r["truth"]["telemetry_cursor"] = rows[-1]["id"]
+    samples = [json.loads(x["body"]) for x in rows if x["status"] in ("ACCEPTED", "NEW_DEVICE_SESSION")]
+    excluded = len(rows) - len(samples)
+    if not samples:
+        return {"interval_index": i, "received_at_interval": None, "quality": "STALE", "source_kind": p["source_kind"],
+                "measurement_scope": p["observation_scope"], "tank_l": None, "pump_model_kw": None, "ev_model_kw": None,
+                "ev_id": None, "aggregate_model_kw": None, "branch_attribution": "UNKNOWN", "received_at": None,
+                "raw_bench": {"sample_count": 0, "excluded_samples": excluded}}
+    kinds = {s["source_kind"] for s in samples}
+    hw = "hardware" in kinds
+    source_kind = ("hardware" if p["telemetry_power_scale"] == 1 and p["telemetry_volume_scale"] == 1 else "scaled_hardware") \
+        if hw else "synthetic"
+    branch = p["observation_scope"] == "branch" and all(
+        s.get("pump_power_w") is not None and s.get("ev_load_power_w") is not None for s in samples)
+
+    def integrate(field):
+        """Time-weighted mean W and Wh, using device monotonic deltas within one device session."""
+        wh, secs = 0.0, 0.0
+        for a_, b_ in zip(samples, samples[1:]):
+            if a_["device_session_id"] != b_["device_session_id"] or a_.get(field) is None:
+                continue  # reboot: no elapsed time is known across sessions
+            dt = (b_["device_monotonic_ms"] - a_["device_monotonic_ms"]) / 1000
+            if dt > 0:
+                wh += a_[field] * dt / 3600
+                secs += dt
+        vals = [s[field] for s in samples if s.get(field) is not None]
+        if not vals:
+            return None, None, secs
+        mean = wh * 3600 / secs if secs > 0 else sum(vals) / len(vals)
+        return mean, (round(wh, 4) if secs > 0 else None), secs
+
+    agg_w, agg_wh, secs = integrate("aggregate_power_w")
+    pump_w, pump_wh, _ = integrate("pump_power_w") if branch else (None, None, 0)
+    ev_w, ev_wh, _ = integrate("ev_load_power_w") if branch else (None, None, 0)
+    ps = p["telemetry_power_scale"] / 1000
+    tank = [s["tank_volume_l"] for s in samples if s.get("tank_volume_l") is not None]
+    present = [s["ev_id"] for s in p["ev_sessions"] if s["arrival_interval"] <= i < s["departure_interval"]]
+    ev_kw = None if ev_w is None else round(ev_w * ps, 4)
+    obs = {"interval_index": i, "received_at_interval": i, "quality": "VALID", "source_kind": source_kind,
+           "measurement_scope": "branch" if branch else "aggregate",
+           "tank_l": round(tank[-1] * p["telemetry_volume_scale"], 2) if tank else None,
+           "aggregate_model_kw": None if agg_w is None else round(agg_w * ps, 4),
+           "pump_model_kw": None if pump_w is None else round(pump_w * ps, 4),
+           "ev_model_kw": ev_kw,
+           # one charger: energy is attributable only when exactly one EV session is present
+           "ev_id": present[0] if branch and len(present) == 1 and ev_kw and ev_kw > EV_ON_KW else None,
+           "branch_attribution": "MEASURED_BRANCHES" if branch else
+           ("AMBIGUOUS" if (agg_w or 0) * ps > EV_ON_KW else "AGGREGATE_ZERO"),
+           "received_at": iso(now()),
+           "raw_bench": {"sample_count": len(samples), "excluded_samples": excluded, "duration_s": round(secs, 3),
+                         "device_sessions": sorted({s["device_session_id"] for s in samples}),
+                         "mean_aggregate_w": agg_w and round(agg_w, 2), "aggregate_wh": agg_wh,
+                         "mean_pump_w": pump_w and round(pump_w, 2), "pump_wh": pump_wh,
+                         "mean_ev_load_w": ev_w and round(ev_w, 2), "ev_load_wh": ev_wh,
+                         "last_tank_volume_l": tank[-1] if tank else None,
+                         "power_scale": p["telemetry_power_scale"], "volume_scale": p["telemetry_volume_scale"]}}
+    if obs["tank_l"] is None:  # no tank reading: water evidence is unknown, not assumed
+        obs["quality"] = "STALE"
+    return obs
+
+
 @app.post("/api/v1/runs/{run_id}/step")
 def step_run(run_id: str, b: dict = Depends(body), sess=Depends(session)):
     require(sess, "operator")
@@ -663,6 +733,20 @@ def step_run(run_id: str, b: dict = Depends(body), sess=Depends(session)):
         i = r["interval_index"]
         if i >= p["horizon_intervals"]:
             raise ApiError(409, "RUN_FINISHED", "horizon reached", r["revision"])
+        if p["observation_source"] == "telemetry":
+            if set(b) - {"request_id"}:
+                raise ApiError(422, "TELEMETRY_RUN", "telemetry runs take no simulated switches or faults; the device reports them")
+            verdicts = [v for v in [record_observation(r, telemetry_observation(r, i))] if v]
+            r["interval_index"] = i + 1
+            apply_due_events(r)
+            dev = [v for v in verdicts if v["observation_status"] == "OBSERVED_DEVIATION"]
+            if dev and not pending(run_id):
+                claimed = db.one("SELECT 1 FROM claims WHERE run_id=? AND commitment_id=? AND interval_index=?",
+                                 run_id, dev[0]["commitment_id"], i)
+                replan(r, "CLAIM_WITHOUT_OBSERVED_EXECUTION" if claimed else "OBSERVED_DEVIATION")
+            save_run(r)
+            return {"stepped_interval": i, "execution": verdicts[0] if verdicts else None, "late_execution": None,
+                    "state": state_doc(run_id)}
         if b.get("drop_observation") and b.get("delay_observation"):
             raise ApiError(422, "INVALID_STEP", "choose drop_observation or delay_observation, not both")
         sw = b.get("actual_switches") or {}
@@ -720,7 +804,11 @@ def post_telemetry(b: dict = Depends(body), sess=Depends(session)):
     if not isinstance(b["seq_num"], int) or b["seq_num"] < 0:
         raise ApiError(422, "INVALID_SEQ", "seq_num must be a non-negative int")
     with tx():
-        load_run(b["run_id"])
+        run = load_run(b["run_id"])
+        if b["apartment_id"] != run["params"]["apartment_id"]:
+            raise ApiError(422, "WRONG_APARTMENT", "telemetry apartment_id does not match the run")
+        if not isinstance(b.get("device_monotonic_ms"), int) or b["device_monotonic_ms"] < 0:
+            raise ApiError(422, "INVALID_TELEMETRY", "device_monotonic_ms must be a non-negative int")
         dup = db.one("SELECT id FROM telemetry WHERE device_id=? AND device_session_id=? AND seq_num=?",
                      b["device_id"], b["device_session_id"], b["seq_num"])
         if dup:
@@ -792,7 +880,8 @@ def state_doc(run_id):
                                                  "accepted_at": c["accepted_at"], "option": c["body"]["option"]},
         "pending_proposals": pending(run_id),
         "observation": None if not last_obs else {**last_obs, "model_power_kw": last_obs["aggregate_model_kw"],
-                                                  "raw_bench": latest_raw(run_id)},
+                                                  "raw_bench": last_obs.get("raw_bench") or latest_raw(run_id),
+                                                  "latest_device_reading": latest_raw(run_id)},
         "execution": execution,
         "execution_history": execution_history(run_id),
         "readiness": {"water_reserve_status": "UNKNOWN" if ps["stale"] else
@@ -884,6 +973,11 @@ def report(run_id: str, sess=Depends(session)):
             require(sess, "manager", r["params"]["apartment_id"])
         truth = [json.loads(x["body"]) for x in db.q("SELECT body FROM truth_log WHERE run_id=? ORDER BY interval_index", run_id)]
         obs = observed(r)
+        telemetry_run = r["params"]["observation_source"] == "telemetry"
+        if telemetry_run:  # no simulator truth exists: outcomes are what the meters measured (usable intervals only)
+            truth = [{**o, "allowance_model_kw": r["params"]["allowance_model_kw"], "pump_model_kw": o["pump_model_kw"] or 0,
+                      "ev_model_kw": o["ev_model_kw"] or 0, "unmet_water_l": None}
+                     for o in obs if o["quality"] in USABLE and o["aggregate_model_kw"] is not None]
         peaks = set(known_events(r)["peak_intervals"])
         m = run_metrics(r["params"], truth, peaks)
         cnt = lambda sql: db.one(sql, run_id)["n"]
@@ -896,7 +990,11 @@ def report(run_id: str, sess=Depends(session)):
         m["observation_coverage"] = {"intervals_elapsed": len(truth), "valid": sum(o["quality"] in USABLE for o in obs),
                                      "late": sum(o["quality"] == "LATE" for o in obs),
                                      "measurement_scope": r["params"]["observation_scope"]}
-        m["provenance"] = {"source_kind": "synthetic", "plant": "simulation.plant (evaluator truth)",
+        if telemetry_run:
+            m["observation_coverage"]["intervals_elapsed"] = r["interval_index"]
+        m["provenance"] = {"source_kind": obs[-1]["source_kind"] if (telemetry_run and obs) else "synthetic",
+                           "plant": "device telemetry (measured; unmet water not observable)" if telemetry_run
+                           else "simulation.plant (evaluator truth)",
                            "advisory_id": r["active_advisory_id"], "computed_at": iso(now())}
         if sess["role"] == "manager":  # simulator truth is evaluator-only
             return {"counts": m["counts"], "observation_coverage": m["observation_coverage"],

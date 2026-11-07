@@ -231,7 +231,7 @@ def test_telemetry_duplicate_order_reboot(api):
     c = api
     run = new_run(c)
     base = {"run_id": run, "apartment_id": "APT_1", "device_id": "bench-1", "source_kind": "hardware",
-            "voltage_v": 12.0, "pump_power_w": None}
+            "voltage_v": 12.0, "pump_power_w": None, "device_monotonic_ms": 1000}
     post = lambda **kw: c.post("/api/v1/telemetry", headers=c.dev, json={**base, **kw}).json()["status"]
     assert post(device_session_id="b1", seq_num=5) == "ACCEPTED"
     assert post(device_session_id="b1", seq_num=5) == "DUPLICATE"
@@ -425,3 +425,99 @@ def test_sonia_followups_scoping_history_listing(api):
     assert "peak_participating_model_kw" in c.get(f"/api/v1/runs/{run}/report", headers=c.op).json()
     assert run in [x["run_id"] for x in c.get("/api/v1/runs", headers=c.op).json()["runs"]]
     assert c.get("/api/v1/runs", headers=c.mgr).status_code == 403
+
+
+# ---------- device emulator + telemetry-driven observations ----------
+def test_emulator_physics():
+    from simulation.device_emulator import DeviceEmulator, load_profile
+    e = DeviceEmulator(load_profile(), "r")
+    e.pump_on = True
+    t0 = e.tank_l
+    s = e.interval_samples(10)
+    assert e.tank_l > t0 + 1000 and s[-1]["pump_power_w"] > 2000 and s[-1]["source_kind"] == "synthetic"
+    e.dry, t1 = True, e.tank_l
+    s = e.interval_samples(10)
+    assert e.tank_l < t1 and s[-1]["pump_power_w"] > 2000  # power without water
+    seq = s[-1]["seq_num"]
+    e.reboot()
+    assert e.sample(11)["seq_num"] == 1 < seq and e.boot == 2
+    assert DeviceEmulator(load_profile(), "r").boot_prefix != e.boot_prefix  # new process, new boot id
+
+
+def telemetry_run(c):
+    from simulation.device_emulator import DeviceEmulator, load_profile
+    pf = load_profile()
+    run = new_run(c, observation_source="telemetry", pump_inflow_lph=pf["pump"]["flow_lpm"] * 60)
+    p = c.post("/api/v1/requirements", headers=c.mgr, json={"run_id": run, "request_id": f"q-{run}", "ev_sessions": []}).json()["proposal"]
+    assert accept(c, run, p, f"a-{run}").status_code == 200
+    return run, DeviceEmulator(pf, run, device_id="bench-1")
+
+
+def send(c, emu, i, skip=False, dup=False):
+    sent = [] if skip else emu.interval_samples(i)
+    for s in sent:
+        assert c.post("/api/v1/telemetry", headers=c.dev, json=s).status_code == 200
+    if dup and sent:
+        assert c.post("/api/v1/telemetry", headers=c.dev, json=sent[-1]).json()["status"] == "DUPLICATE"
+    return step(c, emu.run_id, f"t{i}-{emu.seq}-{emu.boot}")
+
+
+def test_telemetry_run_detects_false_done_and_dry_pump(api):
+    c = api
+    run, emu = telemetry_run(c)
+    assert c.post(f"/api/v1/runs/{run}/step", headers=c.op,
+                  json={"request_id": "x", "actual_switches": {"pump": "ON"}}).status_code == 422
+    acts = state(c, run)["active_commitment"]["option"]["actions"]
+    # interval 0: follow plan exactly -> measured match from device readings
+    emu.pump_on, emu.ev_on = acts[0]["pump"] == "ON", acts[0]["ev"] != "OFF"
+    out = send(c, emu, 0, dup=True)
+    assert out["execution"]["observation_status"] == "OBSERVED_MATCH", out["execution"]
+    o = out["state"]["observation"]
+    assert o["source_kind"] == "synthetic" and o["measurement_scope"] == "branch"
+    rb = o["raw_bench"]
+    assert rb["sample_count"] == 15 and rb["excluded_samples"] == 0 and abs(rb["duration_s"] - 14) < 1e-9  # duplicate never stored
+    if acts[0]["ev"] != "OFF":
+        assert abs(rb["ev_load_wh"] - rb["mean_ev_load_w"] * 14 / 3600) < 0.01  # Wh from actual device seconds
+        assert o["ev_id"] == "EV_1"
+    # interval 1: manager reports done, person left everything off -> contradicted, revision proposed
+    com = state(c, run)["active_commitment"]
+    a1 = acts[1]
+    kind = "pump" if a1["pump"] == "ON" else "ev"
+    c.post("/api/v1/execution/claims", headers=c.mgr, json={"run_id": run, "commitment_id": com["commitment_id"],
+           "interval_index": 1, "action_id": f"{com['commitment_id']}:1:{kind}", "request_id": "tc1"})
+    emu.pump_on = emu.ev_on = False
+    out = send(c, emu, 1)
+    assert out["execution"]["observation_status"] == "OBSERVED_DEVIATION"
+    assert out["state"]["pending_proposals"][0]["reason"] == "CLAIM_WITHOUT_OBSERVED_EXECUTION"
+    # interval 2: readings lost -> STALE, never zero
+    out = send(c, emu, 2, skip=True)
+    assert out["execution"]["observation_status"] == "STALE" and out["state"]["observation"]["aggregate_model_kw"] is None
+    # interval 3: device reboots; readings from the new session are used, no elapsed time across sessions
+    emu.reboot()
+    out = send(c, emu, 3)
+    assert out["state"]["observation"]["raw_bench"]["device_sessions"] == [f"{emu.boot_prefix}-2"]
+    rep = c.get(f"/api/v1/runs/{run}/report", headers=c.op).json()
+    assert rep["provenance"]["plant"].startswith("device telemetry") and rep["unmet_withdrawal_l"] is None
+    assert rep["observation_coverage"]["valid"] == 3 and rep["observation_coverage"]["intervals_elapsed"] == 4
+
+
+def test_telemetry_wrong_apartment_rejected(api):
+    c = api
+    run, emu = telemetry_run(c)
+    s = emu.sample(0)
+    s["apartment_id"] = "APT_2"
+    assert c.post("/api/v1/telemetry", headers=c.dev, json=s).status_code == 422
+
+
+def test_telemetry_dry_pump_is_deviation(api):
+    c = api
+    run, emu = telemetry_run(c)
+    acts = state(c, run)["active_commitment"]["option"]["actions"]
+    k = next(a["interval_index"] for a in acts if a["pump"] == "ON")
+    for j in range(k):
+        emu.pump_on, emu.ev_on = acts[j]["pump"] == "ON", acts[j]["ev"] != "OFF"
+        send(c, emu, j)
+    emu.pump_on, emu.ev_on, emu.dry = True, acts[k]["ev"] != "OFF", True
+    out = send(c, emu, k)
+    assert out["execution"]["observation_status"] == "OBSERVED_DEVIATION"
+    assert out["execution"]["reason"] == "PUMP_POWER_WITHOUT_WATER_DELIVERY"

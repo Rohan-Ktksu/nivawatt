@@ -1,0 +1,23 @@
+{
+  "profile_id": "apartment_reference_v1",
+  "source_kind": "synthetic",
+  "description": "Reference mid-size Bengaluru apartment block for the device emulator. Typical publicly reported values, not measurements of any specific building or of our bench.",
+  "building": {"flats": "about 20-26", "floors": "5-6", "lift_ft": 85},
+  "tank": {"capacity_l": 10000, "reserve_l": 3000, "initial_l": 4500, "sump_l": 6000},
+  "pump": {"rated_kw": 2.2, "rating_hp": 3, "phases": 3, "supply_v": 415, "flow_lpm": 100,
+           "flow_basis": "estimate (10,000 L in under 2 h); replace with a manufacturer head-discharge chart or a measured fill"},
+  "ev_charger": {"rated_kw": 3.3, "supply_v": 230, "alternative_rated_kw": 7.4},
+  "sensor_noise": {"tank_l_sd": 15, "power_fraction_sd": 0.02},
+  "emulator": {"sample_period_s": 1.0, "seconds_per_model_interval": 15,
+               "time_note": "Emulator physics runs model time = real time x (900 / seconds_per_model_interval). Reported watts are true-scale; reported tank litres are model-scale."},
+  "sources": [
+    {"claim": "20-flat, 5-floor building, 85 ft lift, 10,000 L tank; 1 HP too slow, 3 HP three-phase advised",
+     "url": "https://www.indiawaterportal.org/questions/need-help-pump-selection-pump-water-65-feet-high-overhead-tank-bangalore-karnataka-need"},
+    {"claim": "26-family, 6-storey building using a 3 HP motor", "url": "https://oldiwp.indiawaterportal.org/questions/need-advice-pump-capacity"},
+    {"claim": "Bangalore sumps commonly 6,000 L (one tanker load)", "url": "https://www.owler.com/reports/buildingekart/buildingekart-blog-sump--know-your-multipurpose-wa/1479532802923"},
+    {"claim": "BWSSB: >20-flat complexes need auto overflow controllers for tank and sump (case study; verify current rule)",
+     "url": "https://www.slideshare.net/biometrust/water-sustainability-at-nandideepa-apartmentspdf"},
+    {"claim": "Approved community charger models commonly 3.3 kW and 7.4 kW AC", "url": "https://citizenmatters.in/faq-setting-up-community-ev-charging-station-in-apartments"},
+    {"claim": "Some Bengaluru societies install one shared 7.4 kW wallbox", "url": "https://www.meraev.com/blog/charge-electric-car-at-home-apartment-india"}
+  ]
+}

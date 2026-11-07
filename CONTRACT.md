@@ -145,3 +145,17 @@ All of these default to the earlier behaviour (`observation_scope=branch`, no de
 - Under aggregate metering, `apartment.ev_sessions[].remaining_model_kwh` is `null` (unknown), not the full request.
 - Additive `state.execution_history`: one entry per judged or claimed interval across all commitments, with `commitment_id`, `interval_index`, `observation_status`, `reason`, `claims[]`, `quality` and `received_at_interval`. Contradicted claims and late verdicts remain visible after a revision.
 - Additive `GET /runs` (operator): `runs[]` with `run_id`, `apartment_id`, `observation_scope`, `interval_index`, `revision`, `clock_start_utc` and `created_at`, newest first.
+
+### Telemetry-driven runs and the device emulator (additive; Sonia review requested)
+- Run input `apartment_params.observation_source`: `simulator` (default, unchanged) or `telemetry`. A telemetry run takes its observations from `POST /telemetry` readings instead of the server's synthetic plant. `telemetry_power_scale` and `telemetry_volume_scale` (default 1.0) convert device units to model units explicitly.
+- In a telemetry run, `POST /runs/{id}/step {request_id}` closes the current interval from readings received since the previous close. It rejects simulated switches and faults (422 `TELEMETRY_RUN`).
+  - Readings with status ACCEPTED or NEW_DEVICE_SESSION count; duplicates are never stored and OUT_OF_ORDER readings are excluded.
+  - Mean watts and Wh are integrated over actual device `device_monotonic_ms` deltas within one device session; no elapsed time is assumed across a reboot.
+  - Model kW = mean W × power_scale / 1000. Tank = last reading × volume_scale.
+  - EV energy is attributed only when exactly one EV session is present and branch meters exist.
+  - No readings, or no tank reading, makes the interval STALE.
+- `observation.raw_bench` for telemetry runs is the interval summary: `sample_count`, `excluded_samples`, `duration_s`, `device_sessions`, mean W and Wh per branch, `last_tank_volume_l` and the scales. The newest raw reading moves to the additive `observation.latest_device_reading`.
+- `observation.source_kind`: `synthetic` for emulator readings; `hardware` for device readings at scale 1; `scaled_hardware` when scales differ from 1. `branch_attribution` adds `MEASURED_BRANCHES`.
+- `POST /telemetry` now also requires `device_monotonic_ms` (int ≥ 0) and an `apartment_id` matching the run.
+- Report for telemetry runs: outcomes come from usable observations. `provenance.plant` says "device telemetry", and `unmet_withdrawal_l` is null because it can't be observed.
+- Emulator: `scripts/bench_emulator.py` with profile `simulation/profiles/apartment_reference.json`. All its readings are `source_kind=synthetic`.

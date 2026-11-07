@@ -89,6 +89,20 @@ A single aggregate meter that is checked against claims catches most false EV cl
 - Checks: `pytest` 22 passed. Sonia's `node --test tests/ui/ui.test.js` passed 8, and her `tests/ui/e2e_flow.cjs` passed 18 of 18 against this backend; playwright-core was installed in a scratch folder, not the repo.
 - **Still not run:** a physical phone over plain HTTP on the LAN (`python app.py --host 0.0.0.0`). This needs both of us before the demo. The experiments comparison view is Sonia's next piece.
 
+## Device emulator and telemetry-driven runs (no hardware available)
+- Reference profile `simulation/profiles/apartment_reference.json`: mid-size Bengaluru block, 3 HP / 2.2 kW three-phase pump, 10,000 L overhead tank, 6,000 L sump, 3.3 kW charger (7.4 kW variant). Values come from public threads and articles, with sources listed; pump flow of 100 L/min is our own estimate.
+- `observation_source=telemetry` runs: each step closes the interval from device readings. Raw W/Wh stay in `raw_bench`, energy is integrated over device seconds, model values use explicit scales, and duplicates, out-of-order readings and reboots are handled.
+- Live HTTP check, 7 Nov 2026, service on port 8782 plus `bench_emulator.py --fast`:
+  - plan followed → OBSERVED_MATCH;
+  - false done with switches off → OBSERVED_DEVIATION / EV_CHARGING_NOT_OBSERVED and a revised proposal;
+  - dropped interval → STALE (null, not zero);
+  - reboot → NEW_DEVICE_SESSION;
+  - duplicates → ignored;
+  - no source water → PUMP_POWER_WITHOUT_WATER_DELIVERY.
+- Bug found and fixed during that check: the emulator reused boot id `boot-1` across runs, so the server correctly rejected a second run's first readings as duplicates. The emulator now gets a fresh boot id per start, like a real power-up.
+- `pytest`: 26 passed.
+- Everything here is `source_kind=synthetic`. It shows the software path works; it is not bench validation. When real parts exist, the ESP32 posts the same JSON, and a bench profile with measured calibration replaces the reference values (non-1 scales are labelled `scaled_hardware`).
+
 ## Next
 - Hardware adapter, once the real inventory and calibration exist (Teammate 3). Raw bench units stay separate; scaling will be labelled scaled_hardware.
 - Optionally widen the ridge alpha grid; add outage/restart and wrong-forecast scenarios.

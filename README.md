@@ -22,6 +22,18 @@ python -m venv .venv
 .venv\Scripts\python scripts\demo_flow.py          # replays the P0 loop via the API, writes handoff/*.json
 ```
 
+### Emulated device (no hardware yet)
+
+With the service running, `scripts/bench_emulator.py` acts as the bench device. It posts synthetic telemetry built on a reference Bengaluru apartment profile (3 HP pump, 10,000 L tank, 3.3 kW charger; sources in `simulation/profiles/apartment_reference.json`) and closes each interval:
+
+```powershell
+.venv\Scripts\python scripts\bench_emulator.py --new-run --accept --follow-plan --claim --miss 1 --fast   # false done caught from readings
+.venv\Scripts\python scripts\bench_emulator.py --new-run --accept --follow-plan --dry 20,21,22,23 --intervals 30 --fast
+.venv\Scripts\python scripts\bench_emulator.py --run-id <run> --interactive   # you work the switches: "pump on", "ev off", "dry", "drop", "reboot"
+```
+
+Leave out `--accept`/`--claim` when a person uses the manager page. Emulator readings are synthetic and are not bench evidence.
+
 `OPENBLAS_NUM_THREADS` defaults to 1 inside the service; an 8 GB laptop ran out of memory at the first forecast load without it. Demo access codes are generated in `config/local.json` on first start. That file is ignored by Git and is not production authentication.
 
 ## Team starts
