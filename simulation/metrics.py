@@ -49,7 +49,8 @@ def run_metrics(p, truth, peak_intervals):
         "peak_window_energy_model_kwh": round(peak_e, 4),
         "total_participating_energy_model_kwh": round(total_e, 4),
         "reserve_violation_intervals": viol,
-        "unmet_withdrawal_l": round(truth[-1]["unmet_water_l"], 2) if truth else 0.0,
+        "unmet_withdrawal_l": round(truth[-1]["unmet_water_l"], 2) if truth and truth[-1].get("unmet_water_l") is not None
+        else (0.0 if not truth else None),
         "final_tank_l": truth[-1]["tank_l"] if truth else p["tank_init_l"],
         "ev_shortfall_at_departure_model_kwh": ev_short,
         "ev_delivered_model_kwh": {k: round(v, 4) for k, v in delivered.items()},

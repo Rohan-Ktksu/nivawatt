@@ -4,7 +4,7 @@ Follows SMART_METER_EVIDENCE.md item 4. Unknown fields stay **unknown**; nothing
 
 | Field | Local branch sensing (synthetic now) | Bench hardware (target) | Utility smart meter (optional future) |
 |---|---|---|---|
-| Status | Implemented in simulation (`observation_scope=branch` / `aggregate`) | Not connected: inventory and calibration not received | **Not connected.** No documented, authorized export identified |
+| Status | Implemented in simulation (`observation_scope=branch` / `aggregate`) | Not connected. The telemetry path is exercised end to end by `scripts/bench_emulator.py` (synthetic, reference apartment profile); inventory and calibration not received | **Not connected.** No documented, authorized export identified |
 | Utility | n/a | n/a | unknown (BESCOM and CESC Mysore are different utilities) |
 | Connection / meter association | simulated participating circuits of APT_1 | unknown until Teammate 3's inventory | unknown |
 | Device model | none (simulated) | unknown | unknown |
