@@ -1,0 +1,23 @@
+{
+  "schema_version": "0.1",
+  "run_id": "example-synthetic-run",
+  "apartment_id": "APT_1",
+  "device_id": "example-device",
+  "device_session_id": "boot-example-1",
+  "seq_num": 12,
+  "device_monotonic_ms": 12000,
+  "source_kind": "synthetic",
+  "supply_present": true,
+  "voltage_v": 12.0,
+  "aggregate_current_a": 0.0,
+  "aggregate_power_w": 0.0,
+  "pump_power_w": null,
+  "ev_load_power_w": null,
+  "tank_volume_l": 0.45,
+  "sump_water_available": true,
+  "pump_switch_position": "OFF",
+  "ev_switch_position": "OFF",
+  "branch_attribution": "UNKNOWN",
+  "quality": "VALID",
+  "note": "Shape fixture only. No physical sensor produced these values. Null branch readings are not measured zeros."
+}
