@@ -1,30 +1,85 @@
 {
-  "schema_version": "0.1",
+  "schema_version": "0.2",
   "run_id": "example-synthetic-run",
   "revision": 8,
   "mode": "advisory",
-  "clock": {"interval_index": 3, "model_dt_minutes": 15, "model_time_label": "15:30", "source_kind": "synthetic"},
+  "clock": {
+    "interval_index": 3,
+    "model_dt_minutes": 15,
+    "model_time_label": "15:30",
+    "source_kind": "synthetic"
+  },
   "apartment": {
     "apartment_id": "APT_1",
-    "allowance_model_kw": 8.0,
-    "model_tank_l": 4500.0,
-    "model_tank_min_l": 3000.0,
-    "model_tank_max_l": 10000.0,
+    "allowance_model_kw": 8,
+    "model_tank_l": 4500,
+    "model_tank_min_l": 3000,
+    "model_tank_max_l": 10000,
     "source_water_available": true,
     "pump_state": "OFF",
-    "ev_sessions": [{"ev_id": "EV_1", "arrival_interval": 0, "departure_interval": 12, "requested_model_kwh": 10.0, "remaining_model_kwh": 10.0}]
+    "ev_sessions": [
+      {
+        "ev_id": "EV_1",
+        "arrival_interval": 0,
+        "departure_interval": 12,
+        "requested_model_kwh": 10,
+        "remaining_model_kwh": 10
+      }
+    ]
   },
-  "active_commitment": {"commitment_id": "c1", "proposal_id": "p1", "option_id": "o1", "status": "ACCEPTED", "effective_from_interval": 2},
-  "pending_proposals": [{
-    "proposal_id": "p2",
-    "status": "PROPOSED",
-    "expires_at": "2026-11-07T12:05:00Z",
-    "reason": "CLAIM_WITHOUT_OBSERVED_EXECUTION",
-    "source": "rules",
-    "options": [{"option_id": "o2", "label": "Revise remaining pump and charging windows", "effective_from_interval": 4, "predicted_peak_model_kw": 7.5, "predicted_min_tank_model_l": 3100.0, "ev_shortfall_model_kwh": {"EV_1": 0.0}, "requires_operator_exception": false}]
-  }],
-  "observation": {"source_kind": "synthetic", "raw_bench": null, "model_power_kw": 0.0, "branch_attribution": "SYNTHETIC_KNOWN", "received_at": "2026-11-07T12:00:00Z", "quality": "VALID"},
-  "execution": {"commitment_id": "c1", "interval_index": 3, "claim": "CLAIMED_EXECUTED", "observation_status": "OBSERVED_DEVIATION", "reason": "Expected pump response was not observed in this synthetic example."},
-  "readiness": {"water_reserve_status": "ABOVE_MINIMUM", "charging_status": "PENDING", "verified_ev_delivered_model_kwh": null},
-  "warnings": ["SYNTHETIC EXAMPLE ONLY. Trajectories are illustrative, not a solver result or measured performance."]
+  "active_commitment": {
+    "commitment_id": "c1",
+    "proposal_id": "p1",
+    "option_id": "o1",
+    "status": "ACCEPTED",
+    "effective_from_interval": 2
+  },
+  "pending_proposals": [
+    {
+      "proposal_id": "p2",
+      "status": "PROPOSED",
+      "expires_at": "2026-11-07T12:05:00Z",
+      "reason": "CLAIM_WITHOUT_OBSERVED_EXECUTION",
+      "source": "rules",
+      "options": [
+        {
+          "option_id": "o2",
+          "label": "Revise remaining pump and charging windows",
+          "effective_from_interval": 4,
+          "predicted_peak_model_kw": 7.5,
+          "predicted_min_tank_model_l": 3100,
+          "ev_shortfall_model_kwh": {
+            "EV_1": 0
+          },
+          "requires_operator_exception": false
+        }
+      ]
+    }
+  ],
+  "observation": {
+    "source_kind": "synthetic",
+    "raw_bench": null,
+    "model_power_kw": 0,
+    "branch_attribution": "SYNTHETIC_KNOWN",
+    "received_at": "2026-11-07T12:00:00Z",
+    "quality": "VALID"
+  },
+  "execution": {
+    "commitment_id": "c1",
+    "interval_index": 3,
+    "claim": "CLAIMED_EXECUTED",
+    "observation_status": "OBSERVED_DEVIATION",
+    "reason": "Expected pump response was not observed in this synthetic example."
+  },
+  "readiness": {
+    "water_reserve_status": "ABOVE_MINIMUM",
+    "charging_status": "PENDING",
+    "verified_ev_delivered_model_kwh": null
+  },
+  "warnings": [
+    "SYNTHETIC EXAMPLE ONLY. Trajectories are illustrative, not a solver result or measured performance.",
+    "Forecast/advisory fields are initially null until an operator issues a valid advisory. All fixtures are illustrative, not one executed experiment."
+  ],
+  "forecast_id": null,
+  "active_advisory": null
 }

@@ -1,12 +1,12 @@
-# AdaptiveFlow build contract v0.1
+# NivaWatt build contract v0.2
 
-Status: initial team build target; endpoints/source are not implemented by this documentation commit. Rohan is single writer. Sonia records ACK or an exact incompatibility against this version and commit SHA. All additions are additive until discussed; no silent field renames.
+Status: proposed additive team build target; endpoints/source are not implemented by this documentation commit. No Sonia acceptance is recorded by this revision. Rohan is single writer. Sonia records ACK or an exact incompatibility against this version and commit SHA. All additions are additive until discussed; no silent field renames.
 
 ## Runtime and ownership
 
-One local Python service, SQLite persistence and browser views /manager and /operator. Prefer one origin, JSON HTTP and browser polling; no WebSocket requirement. For a fresh build use backend/, scheduler/, simulation/, firmware/ and web/. Reused source may use equivalent directories if mapped once in TEAM_WORKFLOW.md.
+One local Python service, SQLite persistence and browser views /manager and /operator. Prefer one origin, JSON HTTP and browser polling; no WebSocket requirement. For a fresh build use forecasting/, backend/, scheduler/, simulation/, firmware/ and web/. Reused source may use equivalent directories if mapped once in TEAM_WORKFLOW.md.
 
-API prefix: /api/v1. Default proposed port 8780, overridable if occupied. Backend owns computation and persistence. UI does not calculate final schedules or benchmark results. Initial app behavior is source=rules unless a separately implemented and tested optimizer is labelled optimization. No trained model is assumed.
+API prefix: /api/v1. Default proposed port 8780, overridable if occupied. Backend owns computation and persistence. UI does not calculate final schedules or benchmark results. Scheduling is source=rules unless a separately implemented and tested optimizer is labelled optimization. Forecasting labels seasonal_naive, trained_regression and synthetic_fixture separately; a fixture is not a fitted model.
 
 Local demonstration roles: manager is scoped to an apartment; operator owns allowance/event creation. Rohan supplies a lightweight local-demo session mechanism; server validates role/apartment on writes. Keep any local access codes in ignored config, not Git or URLs. These demo sessions do not establish production identity, real BESCOM access or customer authentication.
 
@@ -22,7 +22,7 @@ Local demonstration roles: manager is scoped to an apartment; operator owns allo
 
 ## Authoritative state
 
-GET state contains schema_version, run_id, revision, mode, clock, apartment, active_commitment, pending_proposals, observation, execution, readiness and warnings. STATE_EXAMPLE.json is the shape fixture, explicitly synthetic.
+GET state contains schema_version, run_id, revision, mode, clock, apartment, active_commitment, pending_proposals, observation, execution, readiness and warnings. Version 0.2 adds forecast_id and active_advisory (nullable until an operator issues one). STATE_EXAMPLE.json is the shape fixture, explicitly synthetic.
 
 Core apartment state: apartment_id, allowance_model_kw, model_tank_l, model_tank_min_l, model_tank_max_l, source_water_available, pump_state (ON/OFF/UNKNOWN), ev_sessions (id, arrival/departure interval, requested and remaining model kWh).
 
@@ -45,7 +45,7 @@ Manager cannot change an operator allowance through acceptance, telemetry or req
 | POST /runs | Operator; create synthetic/demo run with scenario, clock mapping and apartment parameters; returns run_id |
 | GET /state?run_id=...&apartment_id=... | Authoritative manager state; example shape provided |
 | GET /operator/state?run_id=... | Operator view, participating scope, apartment summaries and event/coverage status |
-| POST /events | Operator; allowance/outage event with known_from_interval; no future-only information disclosed early |
+| POST /events | Operator; allowance/outage/peak_advisory event with run_id, request_id and known_from_interval; peak_advisory references a forecast_id and exact selected peak_windows; no early future information |
 | POST /requirements | Scoped manager; EV deadline/energy or water requirement changes; returns updated revision and proposal candidates |
 | POST /proposals/{id}/delivered | Scoped manager acknowledgement of render; does not accept or execute |
 | POST /proposals/{id}/decision | Scoped manager; run_id, expected_revision, decision ACCEPT/DECLINE, option_id, request_id; returns state |
@@ -83,3 +83,26 @@ Same plant parameters, external disturbance-generation rules, known-event timing
 Acknowledgement and measured replanners use the same scheduler and all available tank measurements. The controlled difference is electrical execution/energy-progress evidence. Do not restrict acknowledgement tank use to emergencies merely to create a win. Name it an experimental baseline, not a faithful reproduction of a cited paper.
 
 Simulator truth is available to the evaluator only; policies receive their declared observations. A single physical run can have simulated shadow comparisons, clearly labelled. Repeated measured policy trials are required for hardware performance comparisons.
+
+## Forecasting/advisory additions in v0.2
+
+These additions preserve existing apartment fields. Rohan confirms implementation details and Sonia acknowledges exact version/commit before live integration. Examples are explicitly synthetic.
+
+| Method/path after /api/v1 | Proposed behaviour |
+|---|---|
+| POST /forecasts/replay | Operator-only historical replay from a registered dataset and model; returns immutable forecast snapshot |
+| GET /forecasts/{id} | Authorized read of forecast provenance, 24 hourly points and selected peak windows |
+
+Replay input: request_id, dataset_id, model_name and forecast_start. The backend derives/verifies the cutoff, available history and chronological split. It does not trust a client to supply future observations or preferred evaluation metrics. Evaluator-only future actuals do not appear in planning inputs.
+
+Forecast fields: forecast_id, source_kind (historical_replay or synthetic), source_name, source_url, geographic_scope, resolution_minutes, demand_unit, model_name, model_kind, dataset_fingerprint, training_end, last_observation_time, issued_at, availability_assumptions, forecast_start, forecast_end, points[{start,end,predicted_mw}], peak_windows[{start,end}] and evaluation_reference. Source/coverage/time fields are factual or explicitly unknown. Synthetic fixtures may have null source/training/fingerprint fields and must remain visibly synthetic.
+
+Initial peak selection uses the top three forecast hours, deterministic tie order by earliest start. Keep disjoint hours separate. A real-data snapshot has 24 hourly points covering forecast_start inclusive to forecast_end exclusive. No automatic conversion from regional MW to an apartment allowance occurs. Model intervals may repeat hourly advisories without implying higher-resolution source data.
+
+POST /events with kind=peak_advisory approves selected windows from a saved forecast for a run/apartment set. Required inputs: run_id, request_id, known_from_interval, forecast_id, target_apartments, peak_windows, valid_from and valid_until. Backend validates operator role, temporal ordering, run mapping and window containment, generates advisory_id/issued_at/approved_by_demo_operator, persists the event and updates apartment state only when known/effective. Client display cannot issue an advisory. ADVISORY_EXAMPLE.json is the resulting record, not a request body.
+
+active_advisory contains the saved record or null. forecast_id is the forecast associated with that active advisory, or null before issue. A newer forecast alone does not silently replace an active advisory. Pending proposals include the advisory reference/assumptions used to generate them. Existing event known-time semantics and role/idempotency checks still apply.
+
+A historical_replay snapshot is not a live forecast connection. Publication availability/latency assumptions are explicit. State-level demand is not BESCOM feeder demand. A participating-load allowance is not a whole-building limit without appropriate measurement.
+
+FORECAST_EXAMPLE.json, ADVISORY_EXAMPLE.json and STATE_EXAMPLE.json are shape fixtures, not chronological experiment evidence. Computed evaluation uses chronological held-out forecasts, known signal timing and fair service constraints.

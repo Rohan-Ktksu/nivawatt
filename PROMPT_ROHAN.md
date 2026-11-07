@@ -1,32 +1,26 @@
-# Rohan: paste this into your Claude Code terminal
+# Rohan: Claude Code implementation prompt v0.2
 
-You are implementing the core of oxydevelopers/adaptiveflow with Rohan. Read README.md, AGENTS.md, TEAM_WORKFLOW.md, CONTRACT.md, TEST_AND_DEMO.md and current coordination files. Inspect Git status, actual source and any existing instructions first. Confirm that origin is oxydevelopers/adaptiveflow; do not modify CampusResolve or point an unrelated checkout at this repository.
+You are implementing NivaWatt in oxydevelopers/nivawatt on feature/rohan-core. Read README.md, AGENTS.md, NIVAWATT_BUILD_NOW.md, TEAM_WORKFLOW.md, CONTRACT.md, TEST_AND_DEMO.md and current coordination files. Inspect current source/Git status before editing. Do not alter the unrelated CampusResolve checkout.
 
-Work on feature/rohan-core. Own backend, scheduling, simulation, firmware review, shared configuration, CONTRACT.md and tests/core. Sonia owns web/ and her UI tests. Teammate 3 owns hardware preparation, calibration notes, scenarios and manual validation. Do not overwrite their files.
+Own forecasting/, data ingestion/provenance, backend/, scheduler/, simulation/, firmware/, scripts/, tests/core/, dependencies and shared integration. Sonia owns web/ and UI tests. Teammate 3 owns hardware/calibration/validation evidence. Preserve those boundaries.
 
-Target a usable software demo in a focused 6–8-hour session, with the first phone-to-backend integration inside two hours. This is a target, not permission to invent completed work. Start coding after a brief source inspection; do not reopen broad idea research or produce another architecture essay.
+## Execute in this order
 
-## Implement in this order
+1. Publish the smallest runnable local foundation, ignored credentials/runtime files and v0.2 JSON handoff. Use one service/SQLite/plain web assets for a fresh build; retain verified existing code when suitable. Give Sonia a stable fixture and working API checkpoint early.
+2. Validate actual regional-demand data, its scope, coverage, time alignment and attribution. Candidate KPTCL-derived hourly demand is Karnataka state load, not a BESCOM feeder. Handle report-hour duplicates/missing rows and publication-lag assumptions. Record exact dates/fingerprint.
+3. Implement the previous-week same-hour baseline and a saved 24-hour forecast. Use chronological testing. Derive the prototype top-three peak-hour advisory, with explicit operator approval. Add one small local regression after the baseline works; no deep-learning/LLM service dependency and no fabricated model confidence.
+4. Implement the forecast/advisory additions in CONTRACT.md and include identifiers in manager/operator state. Never translate regional MW automatically into apartment capacity. Keep the configured participating-load allowance separate.
+5. Build one apartment and a mass-balanced pump/tank/charging-emulator model, one feasible option or explicit shortfall, persisted exact-version acceptance, expiry, idempotent claims and server-side role/apartment checks. Acceptance does not actuate equipment.
+6. Observe execution independently from claims, preserve accepted history, flag unsupported/missing/ambiguous evidence and propose revisions. Both comparison replanners receive available tank observations. A changed proposal does not physically execute or silently become accepted.
+7. Hand Sonia the running forecast/advisory and apartment endpoints before firmware or all comparisons are finished. Record actual startup/checks, commit/push owned paths and open a focused PR.
+8. Review the exact bench parts and calibration before firmware/adapter use. Pick one initially working USB or Wi-Fi path. Preserve raw bench units, sequence/reboot handling and provenance. A charging load is not a vehicle SoC sensor.
+9. Evaluate acknowledgement and measured variants using the same planner and fair causal inputs, plus a sensible demand-cap rule and uncoordinated context. Export actual per-run metrics and shortfalls. Alternative outcomes on one bench are simulated unless independently measured.
+10. Freeze features, repair the whole flow, publish reproducible startup/evidence and known limitations. Add the second software apartment only after core/evaluation gates pass.
 
-1. Establish .gitignore and the smallest local server skeleton. Inspect accessible OutageReady-FlexProof source for reusable controller/plant code; do not wait for unavailable old-repository access. No entire-directory replacement. For an empty implementation choose one FastAPI service, SQLite and plain web assets served on the same origin, port 8780 configurable. Document actual installation/startup commands once tested. No application model APIs or paid services.
-2. Implement contract-v0.1 P0 endpoints with real persisted state. Supply a callable deterministic planner, one apartment, one pump and one EV request, a mass-balanced plant and explicit simulated clock. Keep raw hardware and apartment-model units separate. Initially produce one genuinely feasible option or an explicit shortfall. Do not block on MILP adoption if a bounded look-ahead/rule scheduler can establish the flow; label the implemented method honestly.
-3. Wire proposal delivery, exact-version acceptance, expiry and claimed execution. Implement stale-version/run conflicts, idempotent retries and server-side role/apartment scope. No user-management product is needed; use a lightweight explicitly local-demo session design. Acceptance does not actuate physical switches.
-4. Implement observed execution and revision from current evidence. Missing action, contradictory claim and stale data are explicit outcomes. A new proposal does not erase accepted history or change physical load before human action. Both replanners use the same actual tank observations.
-5. Hand Sonia working /health, /state and proposal/claim endpoints immediately; update your coordination file, commit and push. Open a small PR. Do not wait for firmware, all baselines or perfect UI. Rohan reviews/merges checkpoints; never merge automatically without his authorization.
-6. Add telemetry parsing and one physical-input adapter if components exist. Teammate 3 supplies exact parts/calibration; review firmware and signal-voltage compatibility before use. With a shared meter, ambiguous pump/EV attribution stays UNKNOWN. With two channels, integrate measured branch energy using actual elapsed time. If hardware is not ready, keep the synthetic demo usable and identify the limitation.
-7. Add paired acknowledgement-vs-measured runs and simple-cap/open-loop/uncoordinated baselines, then a second simulated apartment if time. Metrics come from the evaluator and actual traces, never UI constants. Policies receive causal inputs; alternative physical outcomes are simulated shadow results unless independently measured.
-8. Finish with matching scenarios, explicit cases where measured feedback ties/loses, evidence export and a reproducible startup/rehearsal path. No BESS, ML training, WhatsApp API, distributed solver or cloud deployment in this sprint.
+## Required checks
 
-## Required meaningful checks
+Chronological leakage and scope; forecast/advisory persistence and authorization; tank/energy/time bounds; false done without action; pump power without water delivery; expired/stale/wrong-run decisions; retries; device reboot/missing/ambiguous data; impossible service requirements; fair comparison and perfect-execution ties; consistent run/revision/report and restart persistence.
 
-- Tank balance and EV progress respect units, availability and physical bounds; individual shortfalls are not hidden.
-- Accepting expired/wrong-version proposals fails; duplicate clicks do not duplicate commitments.
-- A done tap without action never creates observed execution.
-- Revision pending/expired does not apply a proposed action. Power loss takes precedence over planned ON states.
-- Missing/ambiguous readings cannot establish complete compliance or exact branch delivery.
-- Acknowledgement and measured methods share scheduler, requirements, tank observations and human-response assumptions. Perfect execution should be able to produce a tie.
-- Runtime and savings are measured, not promised by the planning document.
+Target a first connected software demonstration in a focused session. Hardware and defensible results may take another session. Keep synthetic fallbacks visibly labelled while real-data/hardware gates remain incomplete. No paid services, BESS, FDIA, transformer-health prediction, automatic mains control, unsupported savings or automatic main merge.
 
-Keep each handoff small. Record actual commands/results and known gaps in COORDINATION_ROHAN.md. Before final PR, run meaningful core checks and git diff --check; do not stage runtime data, secrets, another person's files or environments.
-
-Your first output should be a short implementation decision and immediate work, followed by a pushed core checkpoint and exact instructions Sonia can run. Continue within the authorized scope without asking Rohan to approve routine reversible choices.
+Record actual commands/results and peer requests in COORDINATION_ROHAN.md. Implement the first gate now rather than writing another project plan.

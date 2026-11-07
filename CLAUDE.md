@@ -1,11 +1,11 @@
-# Claude Code entry point
+# NivaWatt Claude Code entry point
 
-Read AGENTS.md, TEAM_WORKFLOW.md and CONTRACT.md first.
+Read AGENTS.md, NIVAWATT_BUILD_NOW.md, TEAM_WORKFLOW.md and CONTRACT.md first. Revision v0.2 restores the regional-demand forecasting and operator-advisory layer.
 
-If the human is Rohan, execute PROMPT_ROHAN.md and own feature/rohan-core.
-If the human is Sonia, execute PROMPT_SONIA.md and own feature/sonia-ui.
-If the human's role is unclear, ask once before editing owned implementation files.
+Rohan: execute PROMPT_ROHAN.md on feature/rohan-core.
+Sonia: execute PROMPT_SONIA.md on feature/sonia-ui.
+If the human role is unclear, clarify before editing role-owned files.
 
-Do not start multiple agents or remote model sessions automatically. The team already has separate human-run sessions. Push useful work at the handoff boundaries; peers can only consume committed, pushed files after fetching.
+The third teammate uses GEMINI.md manually. Do not start remote assistants, background model bridges or multiple agents automatically. Push useful checkpoints; peers consume committed files after fetching at natural handoffs.
 
-The target is a working integrated demo in a focused session. Source and status in this repository take precedence over historical claims about the old OutageReady repository. Ordinary rule-based scheduling is labelled rules; trained ML is not required for this build.
+First produce one saved forecast/advisory and the apartment acceptance, claim, observation and revision loop. Use a seasonal baseline, then an actually fitted small local regression if justified. Rules scheduling is labelled rules. No application LLM API, paid services, model downloads or automatic main merge. Source and actual coordination evidence take precedence over old project claims.
