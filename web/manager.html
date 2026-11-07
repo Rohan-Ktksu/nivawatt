@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NivaWatt apartment manager</title>
+  <link rel="stylesheet" href="/web/style.css">
+</head>
+<body>
+  <div class="sim-banner"><p>Demonstration. Apartment values are a synthetic simulation unless a reading says otherwise.</p></div>
+  <header class="masthead">
+    <h1>Apartment manager</h1>
+    <p class="meta" id="meta"></p>
+  </header>
+  <main>
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <section class="panel" id="signin" hidden>
+      <h2>Sign in</h2>
+      <p class="muted">Local demonstration access, not a production login. The operator's screen shows the run link.</p>
+      <form id="signin-form">
+        <label class="field">Run ID <input type="text" id="run-id" required autocomplete="off"></label>
+        <label class="field">Apartment ID <input type="text" id="apartment-id" value="APT_1" required autocomplete="off"></label>
+        <label class="field">Access code <input type="password" id="access-code" required autocomplete="off"></label>
+        <button class="primary" type="submit">Sign in</button>
+      </form>
+    </section>
+
+    <p class="panel" id="loading" hidden>Loading the latest state.</p>
+
+    <div class="stack" id="app" hidden>
+      <section class="panel next" id="next" aria-label="Recommended next action"></section>
+      <div class="columns">
+        <section class="panel" id="commitment"></section>
+        <section class="panel" id="proposal"></section>
+      </div>
+      <section class="panel" id="execution"></section>
+      <div class="columns">
+        <section class="panel" id="tank"></section>
+        <section class="panel" id="charging"></section>
+      </div>
+      <div class="columns">
+        <section class="panel" id="advisory"></section>
+        <section class="panel" id="readings"></section>
+      </div>
+      <p><button type="button" id="sign-out">Sign out</button></p>
+    </div>
+  </main>
+  <script src="/web/ui.js"></script>
+  <script src="/web/api.js"></script>
+  <script src="/web/manager.js"></script>
+</body>
+</html>
