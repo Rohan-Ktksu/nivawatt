@@ -137,3 +137,11 @@ All of these default to the earlier behaviour (`observation_scope=branch`, no de
 - Step input `delay_observation: true` (simulation): interval i is recorded as STALE now and the reading arrives as LATE at the next step. The step response adds `late_execution` (verdict for that earlier interval or null). It cannot be combined with `drop_observation`.
 - Experiments add policy `aggregate_replan`, scenario `missed_ev_overlapping_pump`, per-run `electrical_meters`, and summary block `paired_branch_minus_aggregate`.
 - Not implemented on purpose: any utility smart-meter endpoint. A future import adapter needs a documented, authorized export and a separate contract proposal.
+
+### Follow-ups to Sonia's integration review (COORDINATION_SONIA.md)
+- Fixed: every SQLite statement now takes the shared lock. Concurrent authorized reads no longer return false 401/403/500 (4 workers × 400 requests over HTTP: 400 × 200). The one-request-at-a-time and retry shortcut in `web/api.js` can be removed; that file is Sonia's.
+- `POST /runs` rejects unknown `apartment_params` keys with 422 instead of silently ignoring them.
+- `GET /runs/{id}/report` for a **manager** returns only `counts`, `observation_coverage`, `provenance` and `scope`. Simulator-truth outcomes stay operator/evaluator-only.
+- Under aggregate metering, `apartment.ev_sessions[].remaining_model_kwh` is `null` (unknown), not the full request.
+- Additive `state.execution_history`: one entry per judged or claimed interval across all commitments, with `commitment_id`, `interval_index`, `observation_status`, `reason`, `claims[]`, `quality` and `received_at_interval`. Contradicted claims and late verdicts remain visible after a revision.
+- Additive `GET /runs` (operator): `runs[]` with `run_id`, `apartment_id`, `observation_scope`, `interval_index`, `revision`, `clock_start_utc` and `created_at`, newest first.

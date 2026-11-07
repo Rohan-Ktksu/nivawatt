@@ -22,7 +22,7 @@ python -m venv .venv
 .venv\Scripts\python scripts\demo_flow.py          # replays the P0 loop via the API, writes handoff/*.json
 ```
 
-Demo access codes are generated in `config/local.json` on first start. That file is ignored by Git and is not production authentication.
+`OPENBLAS_NUM_THREADS` defaults to 1 inside the service; an 8 GB laptop ran out of memory at the first forecast load without it. Demo access codes are generated in `config/local.json` on first start. That file is ignored by Git and is not production authentication.
 
 ## Team starts
 

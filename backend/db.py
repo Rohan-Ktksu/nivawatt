@@ -35,6 +35,12 @@ _conn = None
 
 def conn():
     global _conn
+    with LOCK:
+        return _conn or _open()
+
+
+def _open():
+    global _conn
     if _conn is None:
         path = os.environ.get("NIVAWATT_DB", str(ROOT / "runtime" / "nivawatt.db"))
         Path(path).parent.mkdir(parents=True, exist_ok=True)
@@ -53,16 +59,21 @@ def reset():
     _conn = None
 
 
+# Every statement takes LOCK: the connection is shared across request threads, and tx() holds the same
+# (reentrant) lock for a whole transaction, so readers never interleave with a half-done write.
 def q(sql, *args):
-    return conn().execute(sql, args).fetchall()
+    with LOCK:
+        return conn().execute(sql, args).fetchall()
 
 
 def one(sql, *args):
-    return conn().execute(sql, args).fetchone()
+    with LOCK:
+        return conn().execute(sql, args).fetchone()
 
 
 def ex(sql, *args):
-    conn().execute(sql, args)
+    with LOCK:
+        conn().execute(sql, args)
 
 
 def dumps(o):

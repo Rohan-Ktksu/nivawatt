@@ -35,6 +35,9 @@ def default_withdrawals(n=96):
 
 def make_params(overrides=None):
     p = copy.deepcopy(DEFAULT_PARAMS)
+    unknown = set(overrides or {}) - set(DEFAULT_PARAMS)
+    if unknown:  # an ignored key would silently change what a scenario means
+        raise ValueError(f"unknown apartment parameter(s) {sorted(unknown)}")
     p.update(overrides or {})
     if not p["withdrawal_profile_l"]:
         p["withdrawal_profile_l"] = default_withdrawals(p["horizon_intervals"])
