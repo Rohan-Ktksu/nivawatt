@@ -1,8 +1,8 @@
 {
   "experiment_id": "exp-default",
   "source_kind": "synthetic_simulation",
-  "software_commit": "1512d288b2728dbd7096a6fb74dfd8403c0415e1",
-  "generated_at": "2026-11-07T06:49:30Z",
+  "software_commit": "78707ce50924a92a7de19677a8b79a1d55557b0e",
+  "generated_at": "2026-11-07T08:44:45Z",
   "config": {
     "peak_intervals": [
       40,
@@ -78,6 +78,34 @@
           "allowance_model_kw": 6.0
         }
       },
+      "honest_misses": {
+        "p_miss_pump": 0,
+        "p_miss_ev": 0.3,
+        "p_drop": 0,
+        "p_false_report": 0.0,
+        "stochastic": true
+      },
+      "noisy_sensors_mixed_reports": {
+        "p_miss_pump": 0.1,
+        "p_miss_ev": 0.2,
+        "p_drop": 0.05,
+        "p_false_report": 0.5,
+        "power_noise_sd": 0.05,
+        "tank_noise_sd_l": 30,
+        "p_ev_meter_dropout": 0.05,
+        "stochastic": true
+      },
+      "noisy_late_sensors_false_done": {
+        "p_miss_pump": 0,
+        "p_miss_ev": 0.2,
+        "p_drop": 0,
+        "p_false_report": 1.0,
+        "power_noise_sd": 0.05,
+        "tank_noise_sd_l": 30,
+        "p_ev_meter_dropout": 0.1,
+        "p_reading_late": 0.3,
+        "stochastic": true
+      },
       "infeasible_ev": {
         "p_miss_pump": 0,
         "p_miss_ev": 0,
@@ -135,6 +163,14 @@
         "pump_starts": {
           "mean": 2,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "demand_cap": {
@@ -165,6 +201,14 @@
         },
         "pump_starts": {
           "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -197,6 +241,14 @@
         "pump_starts": {
           "mean": 8,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "ack_replan": {
@@ -227,6 +279,14 @@
         },
         "pump_starts": {
           "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -259,6 +319,14 @@
         "pump_starts": {
           "mean": 8,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 3.7,
+          "sd": 1.6763
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "aggregate_replan": {
@@ -289,6 +357,14 @@
         },
         "pump_starts": {
           "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 3.7,
+          "sd": 1.6763
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -348,6 +424,22 @@
           "measured_better_runs": 0,
           "ties": 20,
           "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 2.7,
+          "min": 1,
+          "max": 6,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
         }
       },
       "paired_branch_minus_aggregate": {
@@ -400,6 +492,22 @@
           "baseline_better_runs": 0
         },
         "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "replans_without_missed_action": {
           "mean": 0,
           "min": 0,
           "max": 0,
@@ -439,6 +547,14 @@
         "pump_starts": {
           "mean": 2,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "demand_cap": {
@@ -469,6 +585,14 @@
         },
         "pump_starts": {
           "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -501,6 +625,14 @@
         "pump_starts": {
           "mean": 8,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "ack_replan": {
@@ -532,6 +664,14 @@
         "pump_starts": {
           "mean": 7.9,
           "sd": 0.3
+        },
+        "plans_computed": {
+          "mean": 14.75,
+          "sd": 2.3211
+        },
+        "replans_without_missed_action": {
+          "mean": 13.75,
+          "sd": 2.3211
         }
       },
       "measured_replan": {
@@ -563,6 +703,14 @@
         "pump_starts": {
           "mean": 7.9,
           "sd": 0.3
+        },
+        "plans_computed": {
+          "mean": 14.75,
+          "sd": 2.3211
+        },
+        "replans_without_missed_action": {
+          "mean": 13.75,
+          "sd": 2.3211
         }
       },
       "aggregate_replan": {
@@ -594,6 +742,14 @@
         "pump_starts": {
           "mean": 7.9,
           "sd": 0.3
+        },
+        "plans_computed": {
+          "mean": 14.75,
+          "sd": 2.3211
+        },
+        "replans_without_missed_action": {
+          "mean": 13.75,
+          "sd": 2.3211
         }
       },
       "paired_measured_minus_ack": {
@@ -652,6 +808,22 @@
           "measured_better_runs": 0,
           "ties": 20,
           "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
         }
       },
       "paired_branch_minus_aggregate": {
@@ -704,6 +876,406 @@
           "baseline_better_runs": 0
         },
         "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        }
+      }
+    },
+    "honest_misses": {
+      "uncoordinated": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
+        }
+      },
+      "demand_cap": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
+        }
+      },
+      "fixed_plan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 2.9463,
+          "sd": 1.4636
+        },
+        "pump_starts": {
+          "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
+        }
+      },
+      "ack_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.41,
+          "sd": 0.4795
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 7,
+          "sd": 2.8284
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
+        }
+      },
+      "measured_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.41,
+          "sd": 0.4795
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 7,
+          "sd": 2.8284
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
+        }
+      },
+      "aggregate_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.41,
+          "sd": 0.4795
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 7,
+          "sd": 2.8284
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
+        }
+      },
+      "paired_measured_minus_ack": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        }
+      },
+      "paired_branch_minus_aggregate": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "replans_without_missed_action": {
           "mean": 0,
           "min": 0,
           "max": 0,
@@ -743,6 +1315,14 @@
         "pump_starts": {
           "mean": 2,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "demand_cap": {
@@ -773,6 +1353,14 @@
         },
         "pump_starts": {
           "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -805,6 +1393,14 @@
         "pump_starts": {
           "mean": 8,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "ack_replan": {
@@ -835,6 +1431,14 @@
         },
         "pump_starts": {
           "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -867,6 +1471,14 @@
         "pump_starts": {
           "mean": 8,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "aggregate_replan": {
@@ -897,6 +1509,14 @@
         },
         "pump_starts": {
           "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -950,6 +1570,22 @@
           "baseline_better_runs": 0
         },
         "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "replans_without_missed_action": {
           "mean": 0,
           "min": 0,
           "max": 0,
@@ -1014,6 +1650,22 @@
           "measured_better_runs": 0,
           "ties": 1,
           "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
         }
       }
     },
@@ -1047,6 +1699,14 @@
         "pump_starts": {
           "mean": 2,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "demand_cap": {
@@ -1077,6 +1737,14 @@
         },
         "pump_starts": {
           "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -1109,6 +1777,14 @@
         "pump_starts": {
           "mean": 8,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "ack_replan": {
@@ -1139,6 +1815,14 @@
         },
         "pump_starts": {
           "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -1171,6 +1855,14 @@
         "pump_starts": {
           "mean": 8,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 7,
+          "sd": 2.8284
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "aggregate_replan": {
@@ -1201,6 +1893,14 @@
         },
         "pump_starts": {
           "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 6.95,
+          "sd": 2.729
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -1254,6 +1954,22 @@
           "baseline_better_runs": 0
         },
         "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 6,
+          "min": 1,
+          "max": 13,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
+        },
+        "replans_without_missed_action": {
           "mean": 0,
           "min": 0,
           "max": 0,
@@ -1318,6 +2034,22 @@
           "measured_better_runs": 0,
           "ties": 20,
           "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0.05,
+          "min": 0,
+          "max": 1,
+          "measured_better_runs": 0,
+          "ties": 19,
+          "baseline_better_runs": 1
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
         }
       }
     },
@@ -1351,6 +2083,14 @@
         "pump_starts": {
           "mean": 2,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "demand_cap": {
@@ -1381,6 +2121,14 @@
         },
         "pump_starts": {
           "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -1413,6 +2161,14 @@
         "pump_starts": {
           "mean": 9,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "ack_replan": {
@@ -1443,6 +2199,14 @@
         },
         "pump_starts": {
           "mean": 9,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -1475,6 +2239,14 @@
         "pump_starts": {
           "mean": 9,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 7,
+          "sd": 2.8284
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "aggregate_replan": {
@@ -1505,6 +2277,14 @@
         },
         "pump_starts": {
           "mean": 9,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 6.55,
+          "sd": 2.7473
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -1558,6 +2338,22 @@
           "baseline_better_runs": 0
         },
         "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 6,
+          "min": 1,
+          "max": 13,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
+        },
+        "replans_without_missed_action": {
           "mean": 0,
           "min": 0,
           "max": 0,
@@ -1622,6 +2418,22 @@
           "measured_better_runs": 0,
           "ties": 20,
           "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0.45,
+          "min": 0,
+          "max": 2,
+          "measured_better_runs": 0,
+          "ties": 13,
+          "baseline_better_runs": 7
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
         }
       }
     },
@@ -1655,6 +2467,14 @@
         "pump_starts": {
           "mean": 2,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "demand_cap": {
@@ -1685,6 +2505,14 @@
         },
         "pump_starts": {
           "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -1717,6 +2545,14 @@
         "pump_starts": {
           "mean": 5.4,
           "sd": 1.2
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "ack_replan": {
@@ -1748,6 +2584,14 @@
         "pump_starts": {
           "mean": 7.85,
           "sd": 0.3571
+        },
+        "plans_computed": {
+          "mean": 4.3,
+          "sd": 1.7916
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "measured_replan": {
@@ -1779,6 +2623,14 @@
         "pump_starts": {
           "mean": 7.85,
           "sd": 0.3571
+        },
+        "plans_computed": {
+          "mean": 4.3,
+          "sd": 1.7916
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "aggregate_replan": {
@@ -1810,6 +2662,14 @@
         "pump_starts": {
           "mean": 7.85,
           "sd": 0.3571
+        },
+        "plans_computed": {
+          "mean": 4.3,
+          "sd": 1.7916
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "paired_measured_minus_ack": {
@@ -1862,6 +2722,22 @@
           "baseline_better_runs": 0
         },
         "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "replans_without_missed_action": {
           "mean": 0,
           "min": 0,
           "max": 0,
@@ -1926,6 +2802,790 @@
           "measured_better_runs": 0,
           "ties": 20,
           "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        }
+      }
+    },
+    "noisy_late_sensors_false_done": {
+      "uncoordinated": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
+        }
+      },
+      "demand_cap": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
+        }
+      },
+      "fixed_plan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 1.7862,
+          "sd": 1.2709
+        },
+        "pump_starts": {
+          "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
+        }
+      },
+      "ack_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0.35,
+          "sd": 0.477
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 1.7862,
+          "sd": 1.2709
+        },
+        "pump_starts": {
+          "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 22.25,
+          "sd": 5.4761
+        },
+        "replans_without_missed_action": {
+          "mean": 20.8,
+          "sd": 5.2688
+        }
+      },
+      "measured_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0.1,
+          "sd": 0.3
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0.005,
+          "sd": 0.0218
+        },
+        "pump_starts": {
+          "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 41.4,
+          "sd": 6.9166
+        },
+        "replans_without_missed_action": {
+          "mean": 34.5,
+          "sd": 6.6295
+        }
+      },
+      "aggregate_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0.3,
+          "sd": 0.4583
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 25.8,
+          "sd": 5.1827
+        },
+        "replans_without_missed_action": {
+          "mean": 21,
+          "sd": 5.0794
+        }
+      },
+      "paired_measured_minus_ack": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": -0.25,
+          "min": -1,
+          "max": 0,
+          "measured_better_runs": 5,
+          "ties": 15,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": -1.7812,
+          "min": -4.225,
+          "max": 0,
+          "measured_better_runs": 19,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 19.15,
+          "min": 5,
+          "max": 27,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
+        },
+        "replans_without_missed_action": {
+          "mean": 13.7,
+          "min": 3,
+          "max": 20,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
+        }
+      },
+      "paired_branch_minus_aggregate": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": -0.2,
+          "min": -1,
+          "max": 0,
+          "measured_better_runs": 4,
+          "ties": 16,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0.005,
+          "min": 0,
+          "max": 0.1,
+          "measured_better_runs": 0,
+          "ties": 19,
+          "baseline_better_runs": 1
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 15.6,
+          "min": 3,
+          "max": 25,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
+        },
+        "replans_without_missed_action": {
+          "mean": 13.5,
+          "min": 4,
+          "max": 20,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
+        }
+      }
+    },
+    "noisy_sensors_mixed_reports": {
+      "uncoordinated": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
+        }
+      },
+      "demand_cap": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
+        }
+      },
+      "fixed_plan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 23.35,
+          "sd": 22.1637
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 1.7862,
+          "sd": 1.2709
+        },
+        "pump_starts": {
+          "mean": 7.2,
+          "sd": 0.6782
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
+        }
+      },
+      "ack_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0275,
+          "sd": 0.1199
+        },
+        "reserve_violation_intervals": {
+          "mean": 1.15,
+          "sd": 1.0618
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0.745,
+          "sd": 0.7337
+        },
+        "pump_starts": {
+          "mean": 7.75,
+          "sd": 0.433
+        },
+        "plans_computed": {
+          "mean": 30.5,
+          "sd": 6.249
+        },
+        "replans_without_missed_action": {
+          "mean": 26.8,
+          "sd": 6.0959
+        }
+      },
+      "measured_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0275,
+          "sd": 0.1199
+        },
+        "reserve_violation_intervals": {
+          "mean": 0.95,
+          "sd": 0.9734
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0.005,
+          "sd": 0.0218
+        },
+        "pump_starts": {
+          "mean": 7.75,
+          "sd": 0.433
+        },
+        "plans_computed": {
+          "mean": 44.8,
+          "sd": 5.9296
+        },
+        "replans_without_missed_action": {
+          "mean": 36.6,
+          "sd": 5.7393
+        }
+      },
+      "aggregate_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0275,
+          "sd": 0.1199
+        },
+        "reserve_violation_intervals": {
+          "mean": 1.2,
+          "sd": 1.077
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0.01,
+          "sd": 0.03
+        },
+        "pump_starts": {
+          "mean": 7.75,
+          "sd": 0.433
+        },
+        "plans_computed": {
+          "mean": 32.1,
+          "sd": 5.4854
+        },
+        "replans_without_missed_action": {
+          "mean": 26.6,
+          "sd": 5.5982
+        }
+      },
+      "paired_measured_minus_ack": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": -0.2,
+          "min": -2,
+          "max": 0,
+          "measured_better_runs": 3,
+          "ties": 17,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": -0.74,
+          "min": -2.575,
+          "max": 0,
+          "measured_better_runs": 17,
+          "ties": 3,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 14.3,
+          "min": 2,
+          "max": 24,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
+        },
+        "replans_without_missed_action": {
+          "mean": 9.8,
+          "min": 0,
+          "max": 16,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 19
+        }
+      },
+      "paired_branch_minus_aggregate": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": -0.25,
+          "min": -2,
+          "max": 0,
+          "measured_better_runs": 4,
+          "ties": 16,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": -0.005,
+          "min": -0.1,
+          "max": 0.1,
+          "measured_better_runs": 2,
+          "ties": 17,
+          "baseline_better_runs": 1
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 12.7,
+          "min": 2,
+          "max": 20,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
+        },
+        "replans_without_missed_action": {
+          "mean": 10,
+          "min": 2,
+          "max": 15,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
         }
       }
     },
@@ -1959,6 +3619,14 @@
         "pump_starts": {
           "mean": 2,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "demand_cap": {
@@ -1989,6 +3657,14 @@
         },
         "pump_starts": {
           "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -2021,6 +3697,14 @@
         "pump_starts": {
           "mean": 8,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "ack_replan": {
@@ -2051,6 +3735,14 @@
         },
         "pump_starts": {
           "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -2083,6 +3775,14 @@
         "pump_starts": {
           "mean": 8,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "aggregate_replan": {
@@ -2113,6 +3813,14 @@
         },
         "pump_starts": {
           "mean": 8,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -2172,6 +3880,22 @@
           "measured_better_runs": 0,
           "ties": 1,
           "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
         }
       },
       "paired_branch_minus_aggregate": {
@@ -2224,6 +3948,22 @@
           "baseline_better_runs": 0
         },
         "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "replans_without_missed_action": {
           "mean": 0,
           "min": 0,
           "max": 0,
@@ -2263,6 +4003,14 @@
         "pump_starts": {
           "mean": 2,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "demand_cap": {
@@ -2293,6 +4041,14 @@
         },
         "pump_starts": {
           "mean": 2,
+          "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
           "sd": 0.0
         }
       },
@@ -2325,6 +4081,14 @@
         "pump_starts": {
           "mean": 8,
           "sd": 0.0
+        },
+        "plans_computed": {
+          "mean": 1,
+          "sd": 0.0
+        },
+        "replans_without_missed_action": {
+          "mean": 0,
+          "sd": 0.0
         }
       },
       "ack_replan": {
@@ -2356,6 +4120,14 @@
         "pump_starts": {
           "mean": 6.8,
           "sd": 1.0296
+        },
+        "plans_computed": {
+          "mean": 35.35,
+          "sd": 5.8845
+        },
+        "replans_without_missed_action": {
+          "mean": 33.4,
+          "sd": 5.7044
         }
       },
       "measured_replan": {
@@ -2387,6 +4159,14 @@
         "pump_starts": {
           "mean": 6.8,
           "sd": 1.0296
+        },
+        "plans_computed": {
+          "mean": 48.4,
+          "sd": 5.6071
+        },
+        "replans_without_missed_action": {
+          "mean": 42.25,
+          "sd": 5.8726
         }
       },
       "aggregate_replan": {
@@ -2418,6 +4198,14 @@
         "pump_starts": {
           "mean": 6.8,
           "sd": 1.0296
+        },
+        "plans_computed": {
+          "mean": 37.05,
+          "sd": 6.2087
+        },
+        "replans_without_missed_action": {
+          "mean": 33.3,
+          "sd": 5.6754
         }
       },
       "paired_measured_minus_ack": {
@@ -2476,6 +4264,22 @@
           "measured_better_runs": 0,
           "ties": 20,
           "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 13.05,
+          "min": 8,
+          "max": 16,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
+        },
+        "replans_without_missed_action": {
+          "mean": 8.85,
+          "min": 3,
+          "max": 14,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
         }
       },
       "paired_branch_minus_aggregate": {
@@ -2534,11 +4338,27 @@
           "measured_better_runs": 0,
           "ties": 20,
           "baseline_better_runs": 0
+        },
+        "plans_computed": {
+          "mean": 11.35,
+          "min": 7,
+          "max": 16,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
+        },
+        "replans_without_missed_action": {
+          "mean": 8.95,
+          "min": 4,
+          "max": 14,
+          "measured_better_runs": 0,
+          "ties": 0,
+          "baseline_better_runs": 20
         }
       }
     }
   },
-  "notes": "Paired policy comparison on the synthetic apartment (simulation only; not a bench result).\n\nPolicies\n- uncoordinated (automatic_local): float-switch pump, EV charges on arrival until full. Context only.\n- demand_cap (automatic_local): same, but EV pauses whenever pump+EV would exceed the allowance (water priority).\n- fixed_plan (human_advisory): one rules plan at t=0, never revised.\n- ack_replan (human_advisory): rules scheduler; tank from observations; EV progress credited from done claims.\n- measured_replan (human_advisory): same scheduler and same tank observations; EV progress from measured EV energy.\n- aggregate_replan (human_advisory): same scheduler and tank observations, but only one meter on the combined\n  participating circuits. EV progress = claimed energy, withdrawn only where the aggregate reading is zero\n  (claim contradicted). It never attributes energy to an individual EV from the aggregate (observability variant).\n\nShared across policies within a seed: plant parameters, withdrawal disturbance, advisory peak intervals, and the\nhuman-response draws (a miss for interval i / action kind applies to whichever policy issues that action).\nThe human claims done for every instructed ON action, including missed ones (false done). Policies never see truth.\nAutomatic policies are a different authority class: they are not subject to human misses.",
+  "notes": "Paired policy comparison on the synthetic apartment (simulation only; not a bench result).\n\nPolicies\n- uncoordinated (automatic_local): float-switch pump, EV charges on arrival until full. Context only.\n- demand_cap (automatic_local): same, but EV pauses whenever pump+EV would exceed the allowance (water priority).\n- fixed_plan (human_advisory): one rules plan at t=0, never revised.\n- ack_replan (human_advisory): rules scheduler; tank from observations; EV progress credited from done claims.\n- measured_replan (human_advisory): same scheduler and same tank observations; EV progress from measured EV energy.\n- aggregate_replan (human_advisory): same scheduler and tank observations, but only one meter on the combined\n  participating circuits. EV progress = claimed energy, withdrawn only where the aggregate reading is zero\n  (claim contradicted). It never attributes energy to an individual EV from the aggregate (observability variant).\n\nShared across policies within a seed: plant parameters, withdrawal disturbance, advisory peak intervals, and the\nhuman-response draws (a miss for interval i / action kind applies to whichever policy issues that action).\nBy default the human claims done for every instructed EV action, including missed ones (false done), and sensors\nare ideal. Imperfection knobs (default off, so earlier scenarios are unchanged): p_false_report (chance a skipped\naction is still reported done), power_noise_sd, tank_noise_sd_l, p_ev_meter_dropout (EV meter reads zero while\ncharging), p_reading_late (an interval's reading arrives one interval late). Noise draws come from a separate\nper-seed stream and are shared across policies. Policies never see truth.\nAutomatic policies are a different authority class: they are not subject to human misses.",
   "limitations": [
     "synthetic plant and human-response model; not field or bench evidence",
     "automatic_local policies have different control authority than human_advisory ones",

@@ -12,7 +12,11 @@ Policies
 
 Shared across policies within a seed: plant parameters, withdrawal disturbance, advisory peak intervals, and the
 human-response draws (a miss for interval i / action kind applies to whichever policy issues that action).
-The human claims done for every instructed ON action, including missed ones (false done). Policies never see truth.
+By default the human claims done for every instructed EV action, including missed ones (false done), and sensors
+are ideal. Imperfection knobs (default off, so earlier scenarios are unchanged): p_false_report (chance a skipped
+action is still reported done), power_noise_sd, tank_noise_sd_l, p_ev_meter_dropout (EV meter reads zero while
+charging), p_reading_late (an interval's reading arrives one interval late). Noise draws come from a separate
+per-seed stream and are shared across policies. Policies never see truth.
 Automatic policies are a different authority class: they are not subject to human misses.
 
 Run: python -m simulation.experiment   -> results/experiments/<id>/{runs.csv,summary.json}
@@ -51,6 +55,14 @@ SCENARIOS = {
     # Pump and EV overlap (low tank, daytime EV) so non-zero aggregate readings cannot reveal a missed EV action.
     "missed_ev_overlapping_pump": {"p_miss_pump": 0, "p_miss_ev": 0.3, "p_drop": 0, "stochastic": True,
                                    "params": {"tank_init_l": 3200, "allowance_model_kw": 6.0}},
+    # Imperfect reality: honest people, noisy and late meters. Measured replanning can lose or false-alarm here.
+    "honest_misses": {"p_miss_pump": 0, "p_miss_ev": 0.3, "p_drop": 0, "p_false_report": 0.0, "stochastic": True},
+    "noisy_sensors_mixed_reports": {"p_miss_pump": 0.1, "p_miss_ev": 0.2, "p_drop": 0.05, "p_false_report": 0.5,
+                                    "power_noise_sd": 0.05, "tank_noise_sd_l": 30, "p_ev_meter_dropout": 0.05,
+                                    "stochastic": True},
+    "noisy_late_sensors_false_done": {"p_miss_pump": 0, "p_miss_ev": 0.2, "p_drop": 0, "p_false_report": 1.0,
+                                      "power_noise_sd": 0.05, "tank_noise_sd_l": 30, "p_ev_meter_dropout": 0.1,
+                                      "p_reading_late": 0.3, "stochastic": True},
     "infeasible_ev": {"p_miss_pump": 0, "p_miss_ev": 0, "p_drop": 0, "stochastic": False,
                       "params": {"ev_sessions": [{"ev_id": "EV_1", "arrival_interval": 0, "departure_interval": 32,
                                                   "requested_model_kwh": 40}]}},
@@ -73,6 +85,9 @@ def run_policy(policy, base_p, truth_withdrawal, draws, scen, peaks):
     log, plans, deviations_seen = [], 0, 0
     obs_tank, credited = base_p["tank_init_l"], {s["ev_id"]: 0.0 for s in base_p["ev_sessions"]}
     plan_opt, missed_ev_actions = None, 0
+    pfr = scen.get("p_false_report", 1.0)
+    late_credit = {}  # ev_id -> energy whose reading arrives next interval
+    replans_without_miss, prev_missed = 0, False
     for i in range(n):
         if policy in ("uncoordinated", "demand_cap"):
             pump = t["tank_l"] < base_p["tank_min_l"] + 500 or (t["pump_on"] and t["tank_l"] < base_p["tank_max_l"] - 500)
@@ -89,6 +104,7 @@ def run_policy(policy, base_p, truth_withdrawal, draws, scen, peaks):
                 if abs(obs_tank - exp_tank) > TANK_TOL_L or any(abs(credited[e] - exp_ev[e]) > EV_TOL_KWH for e in exp_ev):
                     need_plan = True
                     deviations_seen += 1
+                    replans_without_miss += not prev_missed  # nothing was skipped last interval: a false alarm or disturbance
             if need_plan:
                 st = {"interval_index": i, "tank_l": obs_tank, "pump_on": t["pump_on"]}
                 reqs = {"ev_sessions": [{**s, "remaining_model_kwh": max(0.0, s["requested_model_kwh"] - credited[s["ev_id"]])}
@@ -102,28 +118,40 @@ def run_policy(policy, base_p, truth_withdrawal, draws, scen, peaks):
             pump = want_pump and draws["pump"][i] >= scen["p_miss_pump"]
             ev = want_ev and draws["ev"][i] >= scen["p_miss_ev"]
             missed_ev_actions += want_ev and not ev
+            prev_missed = (want_pump and not pump) or (want_ev and not ev)
+            claimed_ev = want_ev and (ev or draws["claim"][i] < pfr)  # honest people admit some misses
         t, rec = plant.step(t, p_true, i, pump, ev)
         rec["allowance_model_kw"] = base_p["allowance_model_kw"]
         log.append(rec)
         # observations available to policies (identical tank observations for ack and measured)
         dropped = draws["drop"][i] < scen["p_drop"]
         if not dropped:
-            obs_tank = rec["tank_l"]
+            obs_tank = max(0.0, rec["tank_l"] + draws["tank_noise"][i] * scen.get("tank_noise_sd_l", 0))
         if policy == "measured_replan":
-            if not dropped and rec["ev_id"]:
-                credited[rec["ev_id"]] += rec["ev_model_kw"] * dt_h  # no credit without a measurement
+            for e, kwh in late_credit.items():  # readings delayed from the previous interval arrive now
+                credited[e] += kwh
+            late_credit = {}
+            meter_zero = draws["ev_dropout"][i] < scen.get("p_ev_meter_dropout", 0)
+            if not dropped and rec["ev_id"] and not meter_zero:  # no credit without a measurement
+                kwh = max(0.0, rec["ev_model_kw"] * (1 + draws["power_noise"][i] * scen.get("power_noise_sd", 0)) * dt_h)
+                if draws["late"][i] < scen.get("p_reading_late", 0):
+                    late_credit[rec["ev_id"]] = late_credit.get(rec["ev_id"], 0) + kwh
+                else:
+                    credited[rec["ev_id"]] += kwh
         elif policy == "aggregate_replan" and plan_opt is not None:
-            if want_ev and (dropped or rec["aggregate_model_kw"] > 0):  # a zero reading contradicts the claim
+            agg_seen = rec["aggregate_model_kw"] * (1 + draws["power_noise"][i] * scen.get("power_noise_sd", 0))
+            if claimed_ev and (dropped or agg_seen > 0.05):  # a near-zero reading contradicts the claim
                 e = a["ev"]
                 sess = next(s for s in base_p["ev_sessions"] if s["ev_id"] == e)
                 credited[e] = min(sess["requested_model_kwh"], credited[e] + base_p["ev_charger_model_kw"] * dt_h)
         elif policy in ("ack_replan", "fixed_plan") and plan_opt is not None:
-            if want_ev:  # human claims every instructed action as done
+            if claimed_ev:  # credit what the person reported
                 e = a["ev"]
                 sess = next(s for s in base_p["ev_sessions"] if s["ev_id"] == e)
                 credited[e] = min(sess["requested_model_kwh"], credited[e] + base_p["ev_charger_model_kw"] * dt_h)
     m = run_metrics(p_true, log, set(peaks))
     m.update({"plans_computed": plans, "deviations_detected": deviations_seen, "missed_ev_actions": missed_ev_actions,
+              "replans_without_missed_action": replans_without_miss,
               "electrical_meters": ELECTRICAL_METERS[policy],
               "authority": "automatic_local" if policy in ("uncoordinated", "demand_cap") else "human_advisory"})
     return m
@@ -134,6 +162,10 @@ def draws_for(seed, n, scen, base_withdrawal):
     d = {k: [rng.random() for _ in range(n)] for k in ("pump", "ev", "drop")}
     noise = scen.get("withdrawal_noise", 0)
     w = [round(x * (1 + rng.uniform(-noise, noise)), 1) for x in base_withdrawal] if noise else list(base_withdrawal)
+    # separate stream so adding imperfection never changes the draws of earlier scenarios
+    r2 = random.Random(seed * 1_000_003 + 7)
+    d.update({k: [r2.random() for _ in range(n)] for k in ("claim", "ev_dropout", "late")})
+    d.update({k: [r2.gauss(0, 1) for _ in range(n)] for k in ("power_noise", "tank_noise")})
     return d, w
 
 
@@ -162,13 +194,15 @@ def run(scenarios=None, policies=None, n_seeds=20, peaks=None, params=None):
                              "unmet_withdrawal_l": m["unmet_withdrawal_l"], "final_tank_l": m["final_tank_l"],
                              "ev_shortfall_model_kwh": sum(v or 0 for v in m["ev_shortfall_at_departure_model_kwh"].values()),
                              "pump_starts": m["pump_starts"], "plans_computed": m["plans_computed"],
-                             "deviations_detected": m["deviations_detected"], "missed_ev_actions": m["missed_ev_actions"]})
+                             "deviations_detected": m["deviations_detected"], "missed_ev_actions": m["missed_ev_actions"],
+                             "replans_without_missed_action": m["replans_without_missed_action"]})
     return rows, summarize(rows), {"peak_intervals": peaks, "seeds_per_stochastic_scenario": n_seeds,
                                    "scenarios": {s: SCENARIOS[s] for s in scenarios}, "policies": policies}
 
 
 METRICS = ["peak_participating_model_kw", "allowance_exceedance_model_kwh", "peak_window_energy_model_kwh",
-           "reserve_violation_intervals", "unmet_withdrawal_l", "ev_shortfall_model_kwh", "pump_starts"]
+           "reserve_violation_intervals", "unmet_withdrawal_l", "ev_shortfall_model_kwh", "pump_starts",
+           "plans_computed", "replans_without_missed_action"]
 
 
 def summarize(rows):
