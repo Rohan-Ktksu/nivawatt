@@ -68,9 +68,11 @@
             <div id="run-link"></div>
           </section>
           <section class="panel" id="sim" hidden>
-            <h2>Simulation control</h2>
-            <p class="muted">Stands in for a person at the switches. Accepting a plan never moves these.</p>
+            <h2 id="sim-title">Simulation control</h2>
             <div id="due"></div>
+            <p id="device-note" hidden>The device closes each interval when its readings arrive, so there are no switch controls here.</p>
+            <div id="sim-controls">
+            <p class="muted">Stands in for a person at the switches. Accepting a plan never moves these.</p>
             <fieldset><legend>Pump switch</legend>
               <label class="choice"><input type="radio" name="pump" value="OFF" checked> Off</label>
               <label class="choice"><input type="radio" name="pump" value="ON"> On</label>
@@ -89,6 +91,7 @@
               <button class="primary" id="step" type="button">Advance one interval</button>
             </div>
             <div id="step-result"></div>
+            </div>
           </section>
         </div>
       </div>

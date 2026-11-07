@@ -66,6 +66,14 @@ test('a pending proposal is never given as the action to take', () => {
   assert.ok(r.why.some((w) => /still your plan/.test(w)));
 });
 
+test('device readings describe both payload shapes, and unknown is not zero', () => {
+  assert.strictEqual(ui.fmtRawBench(null), null);
+  assert.match(ui.fmtRawBench({ device_id: 'bench-1', pump_power_w: 3 }), /One reading from bench-1/);
+  assert.match(ui.fmtRawBench({ sample_count: 0, excluded_samples: 2 }), /No readings arrived.*2 duplicate/);
+  assert.strictEqual(ui.fmtRawBench({ sample_count: 15, excluded_samples: 0, mean_pump_w: 0, mean_ev_load_w: 3300 }), '15 readings. Mean pump 0 W, mean charger 3,300 W.');
+  assert.strictEqual(ui.fmtRawBench({ sample_count: 1, excluded_samples: 0, mean_pump_w: null, mean_ev_load_w: null, mean_aggregate_w: null }), '1 reading. Mean combined Unknown.');
+});
+
 test('only real shortfalls are reported', () => {
   assert.deepStrictEqual(ui.shortfalls({ ev_shortfall_model_kwh: { EV_1: 0 }, water_shortfall: { intervals_below_reserve: 0, unmet_withdrawal_l: 0 } }), []);
   const out = ui.shortfalls({ ev_shortfall_model_kwh: { EV_1: 13.6 }, water_shortfall: { intervals_below_reserve: 2, unmet_withdrawal_l: 50 } });

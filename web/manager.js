@@ -1,5 +1,5 @@
 (() => {
-  const { html, fmtTime, fmtClock, fmtWindows, inWindows, intervalTime, fmtNum, fmtSource, fmtReason, fmtStatus, fmtRevisionReason, fmtQuality, fmtScope, fmtAction, recommendation, shortfalls, fmtError } = NW_UI;
+  const { html, fmtTime, fmtClock, fmtWindows, inWindows, intervalTime, fmtNum, fmtSource, fmtReason, fmtStatus, fmtRevisionReason, fmtQuality, fmtScope, fmtRawBench, fmtAction, recommendation, shortfalls, fmtError } = NW_UI;
   const $ = (id) => document.getElementById(id);
   const POLL_MS = 5000;
 
@@ -276,7 +276,7 @@
           <dt>Combined power</dt><dd>${fmtNum(o.aggregate_model_kw, 'kW (model)')}</dd>
           <dt>Pump power</dt><dd>${fmtNum(o.pump_model_kw, 'kW (model)')}</dd>
           <dt>Charging power</dt><dd>${fmtNum(o.ev_model_kw, 'kW (model)')}</dd>
-          ${o.raw_bench ? html`<dt>Bench reading</dt><dd>Raw values from ${o.raw_bench.device_id}, kept separately from model values</dd>` : ''}
+          ${o.raw_bench ? html`<dt>Device readings</dt><dd>${fmtRawBench(o.raw_bench)} Raw units, kept separate from model values.</dd>` : ''}
         ` : ''}
         <dt>Utility smart meter</dt><dd>Not connected</dd>
       </dl>
