@@ -8,10 +8,13 @@
 // NW_BASE defaults to http://127.0.0.1:8780. It uses the installed Chrome (NW_CHANNEL to change).
 // NW_TTL_BASE: optional second service started with NIVAWATT_PROPOSAL_TTL_S=3, for the expiry check.
 // NW_ONLY_TTL=1 runs only that check, for machines short of memory.
+// NW_PYTHON: the repo's Python, to also run the device check. The emulator reads config/local.json, so the
+// service must use that file too (no NIVAWATT_CODES).
 // To try plain http as a phone would, without opening the service to the network:
 //   NW_ARGS=--host-resolver-rules=MAP nivawatt.test 127.0.0.1   NW_BASE=http://nivawatt.test:8780
 const path = require('node:path');
 const assert = require('node:assert');
+const { spawnSync } = require('node:child_process');
 const { chromium } = require('playwright-core');
 
 const BASE = process.env.NW_BASE || 'http://127.0.0.1:8780';
@@ -111,9 +114,9 @@ async function operatorTab(ctx) {
     return finish(browser, consoleErrors);
   }
 
-  console.log(`secure context: ${await op.evaluate(() => window.isSecureContext)}`);
   await check('operator: a wrong access code is refused with a clear message', async () => {
     await op.goto(`${BASE}/operator`);
+    console.log(`secure context: ${await op.evaluate(() => window.isSecureContext)}`);
     await op.fill('#access-code', 'wrong');
     await op.click('#signin-form button');
     await see(op, 'That access code was not accepted');
@@ -208,7 +211,7 @@ async function operatorTab(ctx) {
     assert.match(history, /You reported: (charging|pump) on/);
     await shot(mg, 'manager-5-observed-match');
     await see(op, 'Run outcome');
-    await see(op, 'simulator truth');
+    await see(op, 'evaluator truth');
     await shot(op, 'operator-4-outcome');
   });
 
@@ -341,6 +344,31 @@ async function operatorTab(ctx) {
     await see(tab, 'Approved by');
     await tab.close();
   });
+
+  if (process.env.NW_PYTHON) {
+    await check('device run: no switch controls, telemetry provenance, device readings summary', async () => {
+      const out = spawnSync(process.env.NW_PYTHON, ['scripts/bench_emulator.py', '--base', BASE, '--new-run', '--accept', '--follow-plan', '--intervals', '3', '--fast'], { cwd: path.join(__dirname, '..', '..'), encoding: 'utf8' });
+      assert.strictEqual(out.status, 0, out.stderr);
+      const id = out.stdout.match(/run-[0-9a-f]+/)[0];
+      const tab = await operatorTab(opCtx);
+      await tab.selectOption('#run-picker', id);
+      await tab.waitForFunction(() => document.getElementById('sim-title').textContent === 'Device run');
+      assert.strictEqual(await tab.locator('#step').isVisible(), false);
+      assert.strictEqual(await tab.locator('input[name=pump]').first().isVisible(), false);
+      assert.match(await tab.locator('#outcome-basis').innerText(), /device telemetry/);
+      await absent(tab, 'evaluator truth');
+      assert.match(await tab.locator('#run-picker').innerText(), /device/);
+      await shot(tab, 'operator-8-device-run');
+      await tab.close();
+      const m = await managerOpen(mgCtx, `${BASE}/manager?run=${id}`);
+      const readings = await m.locator('#readings').innerText();
+      assert.match(readings, /Device readings\s*\d+ readings?\. Mean pump [\d,.]+ W, mean charger [\d,.]+ W\./);
+      assert.doesNotMatch(readings, /undefined/);
+      await noSideScroll(m);
+      await shot(m, 'manager-10-device-run');
+      await m.close();
+    });
+  }
 
   await check('authorization: an invalid session returns to sign-in with a reason', async () => {
     const p = await managerOpen(mgCtx, link);

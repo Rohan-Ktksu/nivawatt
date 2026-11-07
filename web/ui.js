@@ -105,6 +105,19 @@ const NW_UI = (() => {
     aggregate: 'One combined meter, plus a tank sensor. It cannot prove which load ran',
   }[scope] || 'Not stated by the service');
 
+  // Device runs send an interval summary; a reading posted to a simulator run arrives as one raw sample.
+  function fmtRawBench(raw) {
+    if (!raw) return null;
+    if (raw.sample_count === undefined) return `One reading from ${raw.device_id || 'an unnamed device'}, in raw device units.`;
+    const ignored = raw.excluded_samples ? ` ${raw.excluded_samples} duplicate or out-of-order ignored.` : '';
+    if (!raw.sample_count) return `No readings arrived for this interval.${ignored}`;
+    const count = `${fmtNum(raw.sample_count)} ${raw.sample_count === 1 ? 'reading' : 'readings'}.`;
+    const branches = raw.mean_pump_w === null && raw.mean_ev_load_w === null
+      ? `Mean combined ${fmtNum(raw.mean_aggregate_w, 'W')}.`
+      : `Mean pump ${fmtNum(raw.mean_pump_w, 'W')}, mean charger ${fmtNum(raw.mean_ev_load_w, 'W')}.`;
+    return `${count} ${branches}${ignored}`;
+  }
+
   function fmtAction(action) {
     if (!action) return 'No action scheduled';
     const pump = action.pump === 'ON' ? 'Turn the pump on' : 'Keep the pump off';
@@ -169,7 +182,7 @@ const NW_UI = (() => {
     DATASET_UNAVAILABLE: 'The demand dataset is not on this computer. Run scripts/fetch_kptcl.py, then restart the service.',
   }[e.code] || e.message);
 
-  return { esc, html, fmtTime, fmtClock, mergeWindows, fmtWindows, inWindows, intervalTime, fmtNum, fmtSource, fmtReason, fmtStatus, fmtRevisionReason, fmtQuality, fmtScope, fmtAction, recommendation, shortfalls, fmtError };
+  return { esc, html, fmtTime, fmtClock, mergeWindows, fmtWindows, inWindows, intervalTime, fmtNum, fmtSource, fmtReason, fmtStatus, fmtRevisionReason, fmtQuality, fmtScope, fmtRawBench, fmtAction, recommendation, shortfalls, fmtError };
 })();
 
 if (typeof module !== 'undefined') module.exports = NW_UI;

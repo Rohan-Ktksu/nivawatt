@@ -193,7 +193,7 @@
     const ev = Object.keys(m.ev_delivered_model_kwh || {});
     put('report', html`
       <h2>Run outcome</h2>
-      <div class="notice tone-unknown"><p>${fmtSource(m.provenance?.source_kind)}. Worked out by the service from simulator truth, for evaluation. Sensors may not have seen all of this.</p></div>
+      <div class="notice tone-unknown" id="outcome-basis"><p>${fmtSource(m.provenance?.source_kind)}. Worked out by the service from ${m.provenance?.plant || 'an unstated source'}.</p></div>
       <dl class="facts">
         <dt>Intervals run</dt><dd>${fmtNum(m.intervals_simulated)} (${m.model_dt_minutes} min each)</dd>
         <dt>Highest participating load</dt><dd>${fmtNum(m.peak_participating_model_kw, 'kW (model)')}</dd>
@@ -226,6 +226,10 @@
     put('due', html`
       <p><strong>Model time ${fmtTime(op.clock.model_time_utc)}</strong>, interval ${op.clock.interval_index} of ${op.clock.horizon_intervals}.</p>
       <p>Accepted plan for this interval: ${ex?.next_action ? fmtAction(ex.next_action) : 'none'}.</p>`);
+    const device = op.observation_source === 'telemetry';
+    $('sim-title').textContent = device ? 'Device run' : 'Simulation control';
+    $('device-note').hidden = !device;
+    $('sim-controls').hidden = device;
     $('step').disabled = ended;
     $('match-plan').disabled = !ex?.next_action;
   }
@@ -314,7 +318,7 @@
       const { runs } = await NW_API.listRuns();
       put('run-picker', html`
         <option value="">${runs.length ? 'Choose a run' : 'No earlier runs'}</option>
-        ${runs.map((r) => html`<option value="${r.run_id}" ${r.run_id === runId ? on('selected') : ''}>${r.run_id}, ${r.apartment_id}, ${r.observation_scope} meters, interval ${r.interval_index}</option>`)}`);
+        ${runs.map((r) => html`<option value="${r.run_id}" ${r.run_id === runId ? on('selected') : ''}>${r.run_id}, ${r.apartment_id}, ${r.observation_source === 'telemetry' ? 'device' : 'simulator'}, ${r.observation_scope} meters, interval ${r.interval_index}</option>`)}`);
     } catch (e) {
       if (e.status !== 401) put('run-picker', html`<option value="">Could not list runs</option>`);
     }

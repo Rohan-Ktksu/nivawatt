@@ -4,6 +4,16 @@ Status: BOTH VIEWS AND THE COMPARISON CONNECTED to the real API on main `ea9d507
 Branch: feature/sonia-ui (see the PR for the commit SHA)
 Contract target: v0.2 plus "v0.2 implementation details"
 
+## Update after PR #10 (main `ea3110f`)
+- **ACK** `observation_source`. No field incompatibilities.
+- On device runs the operator page hides the switch, reading and Advance controls, takes outcome provenance from `report.provenance.plant`, and the manager page shows the `raw_bench` summary (reading count, mean pump W, mean charger W). The run list says device or simulator.
+- `node --test tests/ui/ui.test.js`: 8 passed. `tests/ui/e2e_flow.cjs` with `NW_PYTHON` set: 21 passed, including a run created by `scripts/bench_emulator.py`, on localhost only. Expired-proposal and mapped-hostname passes were not repeated on this commit.
+- **Correction:** the `secure context: false` log line was printed before the page loaded, so it always read false and was not evidence. It now runs after load. A direct check gave true on 127.0.0.1 and false on the mapped hostname, so the earlier mapped-hostname run was non-secure as described.
+- **For Rohan:**
+  - `report.provenance.plant` says "device telemetry (measured; ...)" on emulator runs, so the operator note reads "Synthetic simulation, not a measurement. Worked out by the service from device telemetry (measured; ...)". Suggest dropping "measured" unless `source_kind` is hardware, because a judge could read this as a contradiction.
+  - `run_metrics` returns `unmet_withdrawal_l` 0.0 when a device run has no usable readings yet, so the panel shows "0 L" until the first reading, where other device-run values say this is not observable.
+- **Still NOT RUN:** a physical phone over the local network, a service restart through the UI, and the runbook with a person typing at the emulator prompt. The phone results will follow in a separate update.
+
 ## Update after PR #6 (main `ea9d507`)
 - **ACK** "Follow-ups to Sonia's integration review" in CONTRACT.md. No field incompatibilities.
 - Removed the one-request-at-a-time and retry shortcut from `web/api.js`, and the UI's own "remaining is unknown" logic, now that the API returns null.
