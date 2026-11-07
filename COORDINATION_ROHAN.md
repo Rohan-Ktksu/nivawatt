@@ -103,6 +103,15 @@ A single aggregate meter that is checked against claims catches most false EV cl
 - `pytest`: 26 passed.
 - Everything here is `source_kind=synthetic`. It shows the software path works; it is not bench validation. When real parts exist, the ESP32 posts the same JSON, and a bench profile with measured calibration replaces the reference values (non-1 scales are labelled `scaled_hardware`).
 
+## Evidence pack
+`python scripts/build_evidence.py` regenerates `results/evidence/`. Every number is computed from the data, the API or the exported results. Contents:
+- dataset record;
+- held-out forecast results per day: ridge wins 8 of 14 days, mean MAE 540.0 vs 580.9 MW;
+- demo-day chart and table;
+- false-done trace: emulator readings through the real API, with the claim contradicted in interval 1;
+- simulated comparison tables;
+- limitations.
+
 ## Next
 - Hardware adapter, once the real inventory and calibration exist (Teammate 3). Raw bench units stay separate; scaling will be labelled scaled_hardware.
 - Optionally widen the ridge alpha grid; add outage/restart and wrong-forecast scenarios.
