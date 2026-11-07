@@ -1,5 +1,5 @@
 (() => {
-  const { html, fmtTime, fmtClock, fmtWindows, inWindows, intervalTime, fmtNum, fmtSource, fmtReason, fmtStatus, fmtRevisionReason, fmtQuality, fmtScope, fmtAction, evRemaining, recommendation, shortfalls, fmtError } = NW_UI;
+  const { html, fmtTime, fmtClock, fmtWindows, inWindows, intervalTime, fmtNum, fmtSource, fmtReason, fmtStatus, fmtRevisionReason, fmtQuality, fmtScope, fmtAction, recommendation, shortfalls, fmtError } = NW_UI;
   const $ = (id) => document.getElementById(id);
   const POLL_MS = 5000;
 
@@ -100,6 +100,27 @@
       <p class="muted">Accepting records your decision for this version. It does not switch anything.</p>`);
   }
 
+  // Reports and disagreements stay listed across revised plans; plain matches are only counted.
+  function renderHistory() {
+    const history = state.execution_history || [];
+    const notable = history
+      .filter((h) => h.claims.length || h.observation_status !== 'OBSERVED_MATCH')
+      .sort((a, b) => b.interval_index - a.interval_index);
+    if (!history.length) return '';
+    const matched = history.length - notable.length;
+    return html`
+      <h3>History</h3>
+      <div id="history">
+        ${notable.map((h) => html`
+          <div class="entry">
+            <p><strong>${fmtClock(intervalTime(state.clock, h.interval_index))}</strong> ${chip(fmtStatus(h.observation_status))}</p>
+            <p>${h.claims.length ? `You reported: ${h.claims.map((c) => (c.action_id.endsWith(':pump') ? 'pump on' : 'charging on')).join(', ')}.` : 'You did not report anything.'}</p>
+            ${h.reason ? html`<p class="muted">${fmtReason(h.reason)}</p>` : ''}
+          </div>`)}
+      </div>
+      <p class="muted">${matched} checked ${matched === 1 ? 'interval' : 'intervals'} with no report matched the plan.</p>`;
+  }
+
   function renderExecution() {
     const ex = state.execution;
     const i = state.clock.interval_index;
@@ -141,6 +162,7 @@
           <p class="muted">This records your report only. Sensors check it separately.</p>`
         : html`<p>Nothing is due in this interval, so there is nothing to report.</p>`}
       ` : html`<p>Accept a plan to start reporting. Sensors check each interval independently.</p>`}
+      ${renderHistory()}
       ${report ? html`
         <h3>So far in this run</h3>
         <dl class="facts">
@@ -186,7 +208,7 @@
     const c = state.clock;
     const r = state.readiness;
     const sessions = a.ev_sessions.map((s) => {
-      const remaining = evRemaining(state, s);
+      const remaining = s.remaining_model_kwh;
       const passed = c.interval_index >= s.departure_interval;
       const verified = r.verified_ev_delivered_by_ev_model_kwh ? r.verified_ev_delivered_by_ev_model_kwh[s.ev_id] : null;
       return html`
@@ -317,7 +339,6 @@
     const key = `${next.clock.interval_index}/${next.revision}/${next.execution?.claims?.length || 0}`;
     if (key !== reportKey) {
       reportKey = key;
-      // Only the counts and coverage are used here: the report's energy values are simulator truth, which a manager's sensors may not support.
       report = await NW_API.report(runId).catch(() => null);
     }
 

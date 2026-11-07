@@ -31,7 +31,7 @@ const NW_API = (() => {
   // crypto.randomUUID is unavailable on plain http, which is how phones reach the local service.
   const requestId = (prefix) => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 
-  async function send(method, path, body) {
+  async function call(method, path, body) {
     const headers = {};
     if (body !== undefined) headers['Content-Type'] = 'application/json';
     if (token()) headers.Authorization = `Bearer ${token()}`;
@@ -42,27 +42,7 @@ const NW_API = (() => {
       throw new ApiError(0, 'NETWORK', 'Cannot reach the NivaWatt service. Check that it is running and that this device is on the same network.');
     }
     let data = null;
-    try { data = await res.json(); } catch { /* non-JSON error page; handled by the caller */ }
-    return { res, data };
-  }
-
-  // shortcut: one request at a time, and one retry on 500 or a session 401, because concurrent requests
-  // can fail at the backend's unlocked session lookup (see COORDINATION_SONIA.md). Remove once that is fixed.
-  // Retrying a write is safe: every command carries a request_id and a failed one is rolled back.
-  let queue = Promise.resolve();
-  function call(method, path, body) {
-    const run = queue.then(() => attempt(method, path, body));
-    queue = run.catch(() => {});
-    return run;
-  }
-
-  async function attempt(method, path, body) {
-    let { res, data } = await send(method, path, body);
-    const code = data && data.error && data.error.code;
-    if (res.status === 500 || code === 'UNAUTHENTICATED') {
-      await new Promise((r) => { setTimeout(r, 200); });
-      ({ res, data } = await send(method, path, body));
-    }
+    try { data = await res.json(); } catch { /* non-JSON error page; handled below */ }
     if (res.ok) return data;
     const err = (data && data.error) || {};
     const failure = new ApiError(res.status, err.code || `HTTP_${res.status}`, err.message || `The service returned status ${res.status}.`, data && data.revision);
@@ -102,6 +82,9 @@ const NW_API = (() => {
       scenario,
       ...(apartmentParams ? { apartment_params: apartmentParams } : {}),
     }),
+    listRuns: () => call('GET', '/runs'),
+    createExperiment: (runId) => call('POST', '/experiments', { request_id: requestId('exp'), ...(runId ? { run_id: runId } : {}) }),
+    experiment: (id) => call('GET', `/experiments/${q(id)}`),
     operatorState: (runId) => call('GET', `/operator/state?run_id=${q(runId)}`),
     state: (runId, apartmentId) => call('GET', `/state?run_id=${q(runId)}&apartment_id=${q(apartmentId)}`),
     report: (runId) => call('GET', `/runs/${q(runId)}/report`),

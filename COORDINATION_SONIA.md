@@ -1,8 +1,29 @@
 # Sonia UI handoff
 
-Status: BOTH VIEWS CONNECTED to the real API. The complete software loop passes in a browser. Not yet checked on a physical phone.
+Status: BOTH VIEWS AND THE COMPARISON CONNECTED to the real API on main `ea9d507`. Not yet checked on a physical phone.
 Branch: feature/sonia-ui (see the PR for the commit SHA)
 Contract target: v0.2 plus "v0.2 implementation details"
+
+## Update after PR #6 (main `ea9d507`)
+- **ACK** "Follow-ups to Sonia's integration review" in CONTRACT.md. No field incompatibilities.
+- Removed the one-request-at-a-time and retry shortcut from `web/api.js`, and the UI's own "remaining is unknown" logic, now that the API returns null.
+- Manager view lists `execution_history`, so a contradicted done report stays visible after a revision is accepted.
+- Operator view can reopen a run from `GET /runs`, and an opened run shows the forecast its advisory came from.
+- Added the policy comparison to the operator view: scenario choice, per-policy mean and sd, paired win/tie/loss tables, limitations, seeds and software version. The browser test compares displayed cells with `GET /experiments/{id}`.
+
+| Check, 7 Nov 2026 | Result |
+|---|---|
+| `node --test tests/ui/ui.test.js` | 7 passed (one test removed with the deleted helper) |
+| `tests/ui/e2e_flow.cjs`, http://127.0.0.1:8780 | 20 passed |
+| Same suite under a mapped hostname, `isSecureContext` false, plain http as a phone would use | 20 passed |
+| Expired proposal check, `NW_ONLY_TTL=1` with `NIVAWATT_PROPOSAL_TTL_S=3` | 2 passed |
+| `python -m pytest` | 22 passed |
+
+The OpenBLAS crash did not recur in these runs with `OPENBLAS_NUM_THREADS` left unset, on the 8 GB laptop that hit it. It happened only once before, so this is supporting evidence, not proof.
+
+**Still NOT RUN:** a physical phone over the local network. Mapped-hostname testing covers the non-secure browser context, not Wi-Fi, firewall or a real device. The contract's timeline view is also not built, because the service provides no per-run timeline for experiments.
+
+The sections below describe the earlier handoff and are kept as the record. The requests they list have been answered by PR #6.
 
 ## Contract review
 - **ACK** v0.2 and its implementation details at main `5c49984`.

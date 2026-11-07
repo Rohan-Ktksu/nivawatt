@@ -21,6 +21,8 @@
   let apt = null;
   let lastJson = null;
   let connectionWarned = false;
+  let experiment = null;
+  let comparisonScenario = null;
 
   let toastTimer;
   const toast = (tone, message) => {
@@ -228,6 +230,96 @@
     $('match-plan').disabled = !ex?.next_action;
   }
 
+  const POLICY_LABELS = {
+    uncoordinated: 'No coordination',
+    demand_cap: 'Demand-cap rule',
+    fixed_plan: 'Fixed plan, never revised',
+    ack_replan: 'Revises from done reports',
+    measured_replan: 'Revises from separate meters',
+    aggregate_replan: 'Revises from one combined meter',
+  };
+  const SCENARIO_LABELS = {
+    perfect: 'Every action done as advised',
+    missed_ev_false_done: 'Charging missed but reported done',
+    missed_pump_false_done: 'Pump missed but reported done',
+    stale_telemetry: 'Charging missed, some readings lost',
+    extra_withdrawal: 'Water use differs from the estimate',
+    daytime_ev_tight_allowance: 'Daytime charging with a tight allowance',
+    missed_ev_overlapping_pump: 'Charging missed while the pump also runs',
+    infeasible_ev: 'Charging request that cannot be met',
+  };
+  const METRIC_LABELS = {
+    peak_participating_model_kw: 'Highest load (kW, model)',
+    allowance_exceedance_model_kwh: 'Over allowance (kWh, model)',
+    peak_window_energy_model_kwh: 'Energy in peak hours (kWh, model)',
+    reserve_violation_intervals: 'Intervals below reserve',
+    unmet_withdrawal_l: 'Unmet water (L)',
+    ev_shortfall_model_kwh: 'EV shortfall (kWh, model)',
+    pump_starts: 'Pump starts',
+  };
+  const PAIRS = {
+    paired_measured_minus_ack: 'Separate meters compared with done reports',
+    paired_branch_minus_aggregate: 'Separate meters compared with one combined meter',
+  };
+
+  function renderComparison() {
+    if (!experiment) {
+      put('comparison', '');
+      return;
+    }
+    const names = Object.keys(experiment.summary);
+    if (!names.includes(comparisonScenario)) [comparisonScenario] = names;
+    const scenario = experiment.summary[comparisonScenario];
+    const metrics = Object.keys(METRIC_LABELS);
+    const policies = Object.keys(scenario).filter((k) => !k.startsWith('paired_'));
+    const info = (policy) => experiment.runs.find((r) => r.policy === policy) || {};
+    const pairs = Object.keys(PAIRS).filter((k) => scenario[k]);
+    put('comparison', html`
+      <div class="notice tone-unknown" style="margin-top:.75rem"><p>${fmtSource(experiment.source_kind)}. Experiment <code>${experiment.experiment_id}</code>, generated ${fmtTime(experiment.generated_at)}.</p></div>
+      <label class="field">Scenario
+        <select id="comparison-scenario">
+          ${names.map((n) => html`<option value="${n}" ${n === comparisonScenario ? on('selected') : ''}>${SCENARIO_LABELS[n] || n}</option>`)}
+        </select>
+      </label>
+      <h3>${SCENARIO_LABELS[comparisonScenario] || comparisonScenario}: average per run, with standard deviation</h3>
+      <div class="scroll"><table id="comparison-table">
+        <thead><tr><th>Policy</th><th>Who acts</th><th class="n">Electrical meters</th><th class="n">Runs</th>${metrics.map((m) => html`<th class="n">${METRIC_LABELS[m]}</th>`)}</tr></thead>
+        <tbody>${policies.map((p) => html`<tr data-policy="${p}">
+          <td>${POLICY_LABELS[p] || p}</td>
+          <td>${info(p).authority === 'automatic_local' ? 'Automatic local control' : 'People following advice'}</td>
+          <td class="n">${fmtNum(info(p).electrical_meters)}</td>
+          <td class="n">${fmtNum(scenario[p].runs)}</td>
+          ${metrics.map((m) => html`<td class="n" data-metric="${m}">${fmtNum(scenario[p][m]?.mean, '', 2)} (sd ${fmtNum(scenario[p][m]?.sd, '', 2)})</td>`)}
+        </tr>`)}</tbody>
+      </table></div>
+      <p class="muted">Lower is better in every column. Automatic control is a different kind of authority: it is not subject to people missing actions, so it is context rather than a like-for-like baseline. Meter costs are unknown until the parts list exists.</p>
+      ${pairs.map((k) => html`
+        <h3>${PAIRS[k]}, same seeds</h3>
+        <div class="scroll"><table data-pair="${k}">
+          <thead><tr><th>Measure</th><th class="n">Average difference</th><th class="n">Separate meters better</th><th class="n">Ties</th><th class="n">Other method better</th></tr></thead>
+          <tbody>${metrics.map((m) => html`<tr><td>${METRIC_LABELS[m]}</td><td class="n">${fmtNum(scenario[k][m].mean, '', 3)}</td><td class="n">${fmtNum(scenario[k][m].measured_better_runs)}</td><td class="n">${fmtNum(scenario[k][m].ties)}</td><td class="n">${fmtNum(scenario[k][m].baseline_better_runs)}</td></tr>`)}</tbody>
+        </table></div>`)}
+      ${pairs.length ? html`<p class="muted">A negative difference means separate meters came out lower. These are our experimental baselines, not reproductions of published methods.</p>` : ''}
+      <h3>Limits of this comparison</h3>
+      <ul>${(experiment.limitations || []).map((l) => html`<li>${l}</li>`)}</ul>
+      <dl class="facts">
+        <dt>Seeds per varied scenario</dt><dd>${fmtNum(experiment.config?.seeds_per_stochastic_scenario)}</dd>
+        <dt>Advisory intervals</dt><dd>${(experiment.config?.peak_intervals || []).join(', ') || 'None'}</dd>
+        <dt>Software version</dt><dd><code>${experiment.software_commit || 'Unknown'}</code></dd>
+      </dl>`);
+  }
+
+  async function renderRunPicker() {
+    try {
+      const { runs } = await NW_API.listRuns();
+      put('run-picker', html`
+        <option value="">${runs.length ? 'Choose a run' : 'No earlier runs'}</option>
+        ${runs.map((r) => html`<option value="${r.run_id}" ${r.run_id === runId ? on('selected') : ''}>${r.run_id}, ${r.apartment_id}, ${r.observation_scope} meters, interval ${r.interval_index}</option>`)}`);
+    } catch (e) {
+      if (e.status !== 401) put('run-picker', html`<option value="">Could not list runs</option>`);
+    }
+  }
+
   function renderMeta() {
     put('meta', op
       ? html`Run <code>${runId}</code>, state version ${op.revision}. Model time ${fmtTime(op.clock.model_time_utc)}.`
@@ -242,12 +334,16 @@
         const json = JSON.stringify([nextOp, nextApt]);
         op = nextOp;
         apt = nextApt;
+        // An opened run keeps showing the forecast its advisory was issued from.
+        const issuedFrom = nextOp.active_advisory?.forecast_id;
+        if (issuedFrom && issuedFrom !== forecast?.forecast_id) await loadForecast(await NW_API.forecast(issuedFrom));
         if (json !== lastJson) {
           lastJson = json;
           renderMeta();
           renderAdvisory();
           renderApartments();
           renderSim();
+          if (document.activeElement !== $('run-picker')) renderRunPicker();
           await renderReport();
         }
         if (connectionWarned) { connectionWarned = false; toast(); }
@@ -296,6 +392,12 @@
     if (forecastId) {
       try { await loadForecast(await NW_API.forecast(forecastId)); } catch { forecastId = null; }
     }
+    const savedExperiment = store.get('nivawatt.operator.experiment');
+    if (savedExperiment) {
+      experiment = await NW_API.experiment(savedExperiment).catch(() => null);
+      renderComparison();
+    }
+    renderRunPicker();
     renderAll();
     await refresh();
   }
@@ -330,8 +432,37 @@
       history.replaceState(null, '', `?run=${encodeURIComponent(runId)}`);
       $('step-result').innerHTML = '';
       put('advisory', '');
+      renderRunPicker();
       toast('good', 'Run started. Approve an advisory, then share the manager link.');
     });
+  });
+
+  $('run-picker').addEventListener('change', (ev) => {
+    if (!ev.target.value) return;
+    runId = ev.target.value;
+    store.set('nivawatt.operator.run', runId);
+    history.replaceState(null, '', `?run=${encodeURIComponent(runId)}`);
+    $('step-result').innerHTML = '';
+    put('advisory', '');
+    busy(ev.target, async () => {});
+  });
+
+  $('run-comparison').addEventListener('click', (ev) => {
+    busy(ev.target, async () => {
+      // With an active advisory the comparison uses that run's peak hours; otherwise the service's default.
+      const made = await NW_API.createExperiment(op?.active_advisory ? runId : null);
+      experiment = await NW_API.experiment(made.experiment_id);
+      store.set('nivawatt.operator.experiment', made.experiment_id);
+      renderComparison();
+      toast('good', `Comparison finished: ${made.runs} simulated runs.`);
+    });
+  });
+
+  document.addEventListener('change', (ev) => {
+    if (ev.target.id !== 'comparison-scenario') return;
+    comparisonScenario = ev.target.value;
+    renderComparison();
+    $('comparison-scenario').focus();
   });
 
   document.addEventListener('submit', (ev) => {
