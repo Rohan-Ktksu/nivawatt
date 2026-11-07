@@ -467,6 +467,9 @@ def test_telemetry_run_detects_false_done_and_dry_pump(api):
     run, emu = telemetry_run(c)
     assert c.post(f"/api/v1/runs/{run}/step", headers=c.op,
                   json={"request_id": "x", "actual_switches": {"pump": "ON"}}).status_code == 422
+    assert state(c, run)["observation_source"] == "telemetry"
+    assert c.get(f"/api/v1/operator/state?run_id={run}", headers=c.op).json()["observation_source"] == "telemetry"
+    assert next(x for x in c.get("/api/v1/runs", headers=c.op).json()["runs"] if x["run_id"] == run)["observation_source"] == "telemetry"
     acts = state(c, run)["active_commitment"]["option"]["actions"]
     # interval 0: follow plan exactly -> measured match from device readings
     emu.pump_on, emu.ev_on = acts[0]["pump"] == "ON", acts[0]["ev"] != "OFF"

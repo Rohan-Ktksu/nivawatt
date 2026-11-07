@@ -864,6 +864,8 @@ def state_doc(run_id):
                  for s in p["ev_sessions"]}
     return {
         "schema_version": SCHEMA_VERSION, "run_id": run_id, "revision": r["revision"], "mode": "advisory",
+        # simulator: steps take simulated switches; telemetry: a device (or the emulator) reports and closes intervals
+        "observation_source": p["observation_source"],
         "clock": {"interval_index": i, "model_dt_minutes": p["model_dt_minutes"], "horizon_intervals": p["horizon_intervals"],
                   "model_time_utc": iso(interval_time(r, i)), "clock_start_utc": r["clock_start_utc"], "source_kind": "synthetic"},
         "apartment": {"apartment_id": p["apartment_id"], "allowance_model_kw": p["allowance_model_kw"],
@@ -926,7 +928,8 @@ def list_runs(sess=Depends(session)):
     require(sess, "operator")
     rows = db.q("SELECT run_id, params, interval_index, revision, clock_start_utc, created_at FROM runs ORDER BY created_at DESC")
     return {"runs": [{"run_id": x["run_id"], "apartment_id": json.loads(x["params"])["apartment_id"],
-                      "observation_scope": json.loads(x["params"])["observation_scope"], "interval_index": x["interval_index"],
+                      "observation_scope": json.loads(x["params"])["observation_scope"],
+                      "observation_source": json.loads(x["params"])["observation_source"], "interval_index": x["interval_index"],
                       "revision": x["revision"], "clock_start_utc": x["clock_start_utc"], "created_at": x["created_at"]}
                      for x in rows]}
 
@@ -952,6 +955,7 @@ def get_operator_state(run_id: str, sess=Depends(session)):
         n = s["clock"]["interval_index"]
         valid = db.one("SELECT COUNT(*) n FROM observations WHERE run_id=? AND (body LIKE '%\"quality\":\"VALID\"%' OR body LIKE '%\"quality\":\"LATE\"%')", run_id)["n"]
         return {"schema_version": SCHEMA_VERSION, "run_id": run_id, "revision": s["revision"], "clock": s["clock"],
+                "observation_source": s["observation_source"],
                 "participating_scope": "pump + EV-charging emulator per apartment; background load unmetered (unknown)",
                 "apartments": [{"apartment_id": s["apartment"]["apartment_id"], "allowance_model_kw": s["apartment"]["allowance_model_kw"],
                                 "latest_aggregate_model_kw": (s["observation"] or {}).get("aggregate_model_kw"),

@@ -112,6 +112,22 @@ A single aggregate meter that is checked against claims catches most false EV cl
 - simulated comparison tables;
 - limitations.
 
+## Demo runbook: emulator as device, phone as manager (all readings synthetic)
+1. Laptop: `.venv\Scripts\python app.py --host 0.0.0.0`.
+2. Second terminal: `.venv\Scripts\python scriptsench_emulator.py --new-run --follow-plan --interactive`. It prints the run id, then waits at a prompt before each interval.
+3. Operator page (opened via the laptop's Wi-Fi address): choose that run in the run picker, load the saved forecast, and approve and issue the advisory.
+4. Phone (manager link): accept the plan. Back at the emulator, press Enter. Readings arrive and the interval closes, and both pages show "Sensors agree".
+5. False done: tap done on the phone, then at the emulator prompt type `ev off` (or `pump off`) and press Enter. The phone shows "Sensors disagree" and a waiting proposal.
+6. Accept the revision on the phone, then press Enter at the emulator, which follows the new plan. The phone shows "Sensors agree" and History keeps the contradicted report.
+7. Optional extras at the prompt: `dry` (pump power, no water), `drop` (lost readings → Unknown), `reboot`.
+
+Checked 7 Nov 2026 on an emulator-created run in Chrome at 390 px: the manager page showed "You reported" / "Sensors disagree" / History with no script errors. UI follow-ups for Sonia:
+- hide the Advance/switch controls on telemetry runs;
+- take outcome provenance text from `report.provenance.plant`;
+- show the telemetry `raw_bench` summary (reading count, mean W).
+
+Not yet run end to end with a person typing at the prompt.
+
 ## Next
 - Hardware adapter, once the real inventory and calibration exist (Teammate 3). Raw bench units stay separate; scaling will be labelled scaled_hardware.
 - Optionally widen the ridge alpha grid; add outage/restart and wrong-forecast scenarios.

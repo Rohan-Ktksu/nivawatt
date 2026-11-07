@@ -159,3 +159,4 @@ All of these default to the earlier behaviour (`observation_scope=branch`, no de
 - `POST /telemetry` now also requires `device_monotonic_ms` (int ≥ 0) and an `apartment_id` matching the run.
 - Report for telemetry runs: outcomes come from usable observations. `provenance.plant` says "device telemetry", and `unmet_withdrawal_l` is null because it can't be observed.
 - Emulator: `scripts/bench_emulator.py` with profile `simulation/profiles/apartment_reference.json`. All its readings are `source_kind=synthetic`.
+- Additive `observation_source` (`simulator`|`telemetry`) in `GET /state`, `GET /operator/state` and each `GET /runs` row. UI: for `telemetry`, hide the simulated switch, reading and Advance controls (the device closes intervals), and take outcome provenance text from `report.provenance.plant`.
