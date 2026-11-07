@@ -1,0 +1,156 @@
+{
+  "forecast_id": "fc-1c712d1172",
+  "schema_version": "0.2",
+  "source_kind": "historical_replay",
+  "source_name": "KPTCL daily load-curve reports, parsed by Vonter/kptcl-load-curve",
+  "source_url": "https://github.com/Vonter/kptcl-load-curve",
+  "geographic_scope": "Karnataka state grid (KPTCL). Not BESCOM feeder, transformer or apartment demand.",
+  "resolution_minutes": 60,
+  "demand_unit": "MW",
+  "model_name": "ridge_lag_calendar",
+  "model_kind": "trained_regression",
+  "dataset_fingerprint": "61538bc849335f960bac29dae1a33e8d25221cfc0e3284f832fda320555331ff",
+  "training_end": "2026-08-17T18:30:00Z",
+  "last_observation_time": "2026-08-17T17:30:00Z",
+  "issued_at": "2026-11-07T06:24:56Z",
+  "availability_assumptions": "Historical replay. Assumes reports through D-2 were published by 00:00 IST of D; publication lag not validated. Not a live KPTCL/BESCOM connection.",
+  "forecast_start": "2026-08-18T18:30:00Z",
+  "forecast_end": "2026-08-19T18:30:00Z",
+  "points": [
+    {
+      "start": "2026-08-18T18:30:00Z",
+      "end": "2026-08-18T19:30:00Z",
+      "predicted_mw": 9526.8
+    },
+    {
+      "start": "2026-08-18T19:30:00Z",
+      "end": "2026-08-18T20:30:00Z",
+      "predicted_mw": 9564.4
+    },
+    {
+      "start": "2026-08-18T20:30:00Z",
+      "end": "2026-08-18T21:30:00Z",
+      "predicted_mw": 9277.1
+    },
+    {
+      "start": "2026-08-18T21:30:00Z",
+      "end": "2026-08-18T22:30:00Z",
+      "predicted_mw": 9394.4
+    },
+    {
+      "start": "2026-08-18T22:30:00Z",
+      "end": "2026-08-18T23:30:00Z",
+      "predicted_mw": 9711.2
+    },
+    {
+      "start": "2026-08-18T23:30:00Z",
+      "end": "2026-08-19T00:30:00Z",
+      "predicted_mw": 10646.5
+    },
+    {
+      "start": "2026-08-19T00:30:00Z",
+      "end": "2026-08-19T01:30:00Z",
+      "predicted_mw": 11887.1
+    },
+    {
+      "start": "2026-08-19T01:30:00Z",
+      "end": "2026-08-19T02:30:00Z",
+      "predicted_mw": 14048.2
+    },
+    {
+      "start": "2026-08-19T02:30:00Z",
+      "end": "2026-08-19T03:30:00Z",
+      "predicted_mw": 14588.3
+    },
+    {
+      "start": "2026-08-19T03:30:00Z",
+      "end": "2026-08-19T04:30:00Z",
+      "predicted_mw": 14978.9
+    },
+    {
+      "start": "2026-08-19T04:30:00Z",
+      "end": "2026-08-19T05:30:00Z",
+      "predicted_mw": 16241.9
+    },
+    {
+      "start": "2026-08-19T05:30:00Z",
+      "end": "2026-08-19T06:30:00Z",
+      "predicted_mw": 15613.5
+    },
+    {
+      "start": "2026-08-19T06:30:00Z",
+      "end": "2026-08-19T07:30:00Z",
+      "predicted_mw": 15652.2
+    },
+    {
+      "start": "2026-08-19T07:30:00Z",
+      "end": "2026-08-19T08:30:00Z",
+      "predicted_mw": 15447.7
+    },
+    {
+      "start": "2026-08-19T08:30:00Z",
+      "end": "2026-08-19T09:30:00Z",
+      "predicted_mw": 14881.8
+    },
+    {
+      "start": "2026-08-19T09:30:00Z",
+      "end": "2026-08-19T10:30:00Z",
+      "predicted_mw": 14993.9
+    },
+    {
+      "start": "2026-08-19T10:30:00Z",
+      "end": "2026-08-19T11:30:00Z",
+      "predicted_mw": 14617.7
+    },
+    {
+      "start": "2026-08-19T11:30:00Z",
+      "end": "2026-08-19T12:30:00Z",
+      "predicted_mw": 13365.8
+    },
+    {
+      "start": "2026-08-19T12:30:00Z",
+      "end": "2026-08-19T13:30:00Z",
+      "predicted_mw": 12430.5
+    },
+    {
+      "start": "2026-08-19T13:30:00Z",
+      "end": "2026-08-19T14:30:00Z",
+      "predicted_mw": 11967.1
+    },
+    {
+      "start": "2026-08-19T14:30:00Z",
+      "end": "2026-08-19T15:30:00Z",
+      "predicted_mw": 11852.7
+    },
+    {
+      "start": "2026-08-19T15:30:00Z",
+      "end": "2026-08-19T16:30:00Z",
+      "predicted_mw": 11429.9
+    },
+    {
+      "start": "2026-08-19T16:30:00Z",
+      "end": "2026-08-19T17:30:00Z",
+      "predicted_mw": 11003.7
+    },
+    {
+      "start": "2026-08-19T17:30:00Z",
+      "end": "2026-08-19T18:30:00Z",
+      "predicted_mw": 10653.1
+    }
+  ],
+  "peak_windows": [
+    {
+      "start": "2026-08-19T04:30:00Z",
+      "end": "2026-08-19T05:30:00Z"
+    },
+    {
+      "start": "2026-08-19T05:30:00Z",
+      "end": "2026-08-19T06:30:00Z"
+    },
+    {
+      "start": "2026-08-19T06:30:00Z",
+      "end": "2026-08-19T07:30:00Z"
+    }
+  ],
+  "evaluation_reference": "results/forecast_evaluation.json"
+}

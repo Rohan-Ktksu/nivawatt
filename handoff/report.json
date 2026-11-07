@@ -1,0 +1,44 @@
+{
+  "intervals_simulated": 2,
+  "model_dt_minutes": 15,
+  "peak_participating_model_kw": 3.3,
+  "allowance_exceedance_model_kwh": 0.0,
+  "peak_window_energy_model_kwh": 0.0,
+  "total_participating_energy_model_kwh": 0.825,
+  "reserve_violation_intervals": 0,
+  "unmet_withdrawal_l": 0.0,
+  "final_tank_l": 4380.0,
+  "ev_shortfall_at_departure_model_kwh": {
+    "EV_1": null
+  },
+  "ev_delivered_model_kwh": {
+    "EV_1": 0.825
+  },
+  "pump_starts": 0,
+  "definitions": {
+    "peak_participating_model_kw": "max interval-average pump+EV model kW over simulated intervals",
+    "allowance_exceedance_model_kwh": "sum(max(0, P - allowance) * dt_h); outage intervals get no reduction credit",
+    "peak_window_energy_model_kwh": "participating energy inside advisory peak intervals",
+    "reserve_violation_intervals": "intervals ending with tank below reserve",
+    "unmet_withdrawal_l": "water demanded but not available (physically empty tank)",
+    "ev_shortfall_at_departure_model_kwh": "requested - delivered by departure, per EV; null if departure not reached",
+    "pump_starts": "OFF->ON transitions of the actual pump"
+  },
+  "counts": {
+    "proposals": 2,
+    "acceptances": 2,
+    "claims": 1,
+    "observed_deviations": 1,
+    "claims_contradicted": 1
+  },
+  "observation_coverage": {
+    "intervals_elapsed": 2,
+    "valid": 2
+  },
+  "provenance": {
+    "source_kind": "synthetic",
+    "plant": "simulation.plant (evaluator truth)",
+    "advisory_id": "ev-8901de4529",
+    "computed_at": "2026-11-07T06:24:57Z"
+  }
+}

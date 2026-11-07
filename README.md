@@ -8,7 +8,21 @@ Historical regional demand informs a forecast. A demonstration operator approves
 
 ## Current status
 
-This repository contains planning documents and synthetic shape fixtures. It does not yet contain a verified application, connected hardware, fitted forecasting model or measured benefit results. No live BESCOM integration is established. Forecasting is restored to the scope; it has not been implemented by this documentation update.
+Core software checkpoint (feature/rohan-core): one local FastAPI service with SQLite. It provides historical-replay forecasting on Karnataka state hourly load, operator-approved peak advisories, and one **synthetic** apartment with a proposal, acceptance, claim, observation and revision loop. There is no connected hardware, no measured benefit results and no live BESCOM integration. See COORDINATION_ROHAN.md for actual test results.
+
+## Run it (Windows, Python 3.12; commands as tested)
+
+```powershell
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+.venv\Scripts\python scripts\fetch_kptcl.py      # ODbL dataset -> data/raw (not committed)
+.venv\Scripts\python -m forecasting.evaluate       # chronological backtest -> results/forecast_evaluation.json
+.venv\Scripts\python -m pytest                     # tests/core
+.venv\Scripts\python app.py                        # http://127.0.0.1:8780 ; --host 0.0.0.0 for phones on the LAN
+.venv\Scripts\python scripts\demo_flow.py          # replays the P0 loop via the API, writes handoff/*.json
+```
+
+Demo access codes are generated in `config/local.json` on first start. That file is ignored by Git and is not production authentication.
 
 ## Team starts
 
@@ -54,7 +68,7 @@ git status --short
 
 Read the branch/review instructions before beginning. If the latest plan is still in a PR, use that PR's branch deliberately; a normal clone checks out main. Each person uses their own verified Git identity and role branch. Do not change the remote or source of the unrelated CampusResolve checkout.
 
-Rohan must publish startup commands he actually tests. This planning-only revision claims no working startup command. Keep credentials, runtime databases and environments outside Git. No paid APIs/services, background model bridges or automatic main merge.
+Keep credentials, runtime databases and environments outside Git. No paid APIs/services, background model bridges or automatic main merge.
 
 ## Contribution and evidence
 
