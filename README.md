@@ -75,3 +75,8 @@ Keep credentials, runtime databases and environments outside Git. No paid APIs/s
 Our candidate contribution is measured-execution feedback for human-operated apartment response. Test it against acknowledgement-based replanning with fair information and service requirements. Forecasting, meters and scheduling methods are existing technologies. No first-ever, patent, savings, emissions or grid-protection claim is established by this plan.
 
 Existing OutageReady-FlexProof code may be selectively reused only after authorized inspection and provenance review. Record actual commands/results in each owner's coordination file. Do not copy an old repository's instructions or claim its charts as NivaWatt evidence.
+
+
+## Smart-meter evidence update, 7 November 2026
+
+Read [SMART_METER_EVIDENCE.md](SMART_METER_EVIDENCE.md). Continue the working build with local branch sensing. Utility interval-data access, latency and load identification remain unverified integration assumptions. Aggregate consumption visibility is not branch execution proof. Add the aggregate-only, stale-data and pump-without-water cases to validation. Use existing API fields first; any new fields require Rohan/Sonia contract review. The evidence gap does not establish absence of utility functionality or novelty. Do not upload private bills or customer identifiers.

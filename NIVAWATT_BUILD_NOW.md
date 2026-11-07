@@ -181,3 +181,8 @@ We are building NivaWatt: regional peak-demand forecasting, an operator-approved
 - UN goals: https://sdgs.un.org/goals
 
 This revision accompanies the reconciled README, AGENTS, role prompts and proposed contract v0.2. Read the current branch and coordination acknowledgements; publication of these documents does not establish implemented endpoints or Sonia's acceptance.
+
+
+## Smart-meter evidence update, 7 November 2026
+
+Read [SMART_METER_EVIDENCE.md](SMART_METER_EVIDENCE.md). Continue the working build with local branch sensing. Utility interval-data access, latency and load identification remain unverified integration assumptions. Aggregate consumption visibility is not branch execution proof. Add the aggregate-only, stale-data and pump-without-water cases to validation. Use existing API fields first; any new fields require Rohan/Sonia contract review. The evidence gap does not establish absence of utility functionality or novelty. Do not upload private bills or customer identifiers.
