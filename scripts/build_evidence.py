@@ -262,7 +262,16 @@ def comparison():
         b = v["paired_branch_minus_aggregate"]["ev_shortfall_model_kwh"]
         lines.append(f"| {s} | {a['measured_better_runs']} / {a['ties']} / {a['baseline_better_runs']} "
                      f"| {b['measured_better_runs']} / {b['ties']} / {b['baseline_better_runs']} |")
+    lines += ["", "## Cost of replanning (proposals the manager would be asked to accept)", "",
+              "| Scenario | Plans computed per run: " + " / ".join(P[2:]) + " | Replans with no missed action (sensor noise or a real disturbance): " + " / ".join(P[2:]) + " |",
+              "|---|---|---|"]
+    for s, v in S.items():
+        lines.append(f"| {s} | " + " / ".join(f"{v[p]['plans_computed']['mean']:g}" for p in P[2:]) + " | "
+                     + " / ".join(f"{v[p]['replans_without_missed_action']['mean']:g}" for p in P[2:]) + " |")
     lines += ["", "## Reading this honestly", "",
+              "- Most scenarios use ideal sensors and a person who always reports done after skipping. Under those assumptions checking sensors must win: treat those rows as a logic check, not proof.",
+              "- honest_misses: when people admit skipped actions, acknowledgement replanning ties measured replanning in every seed.",
+              "- noisy_* scenarios add power and tank noise, EV-meter dropouts, late readings and mixed honesty. Measured replanning still reduces EV shortfall, but it replans far more often, many times with no missed action (false alarms from noise). A single aggregate meter reaches similar shortfall with fewer replans in the late-reading case.",
               "- With perfect execution every policy ties; the advantage comes only from catching false or missed actions.",
               "- Missed pump actions tie between acknowledgement and measured replanning because both see the same tank level.",
               "- With stale telemetry the fixed plan beats both replanners on water: stale tank readings mislead replanning.",

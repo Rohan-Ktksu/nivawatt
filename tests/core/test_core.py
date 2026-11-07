@@ -324,6 +324,10 @@ def test_experiment_fairness_properties():
     assert summary["missed_ev_overlapping_pump"]["paired_branch_minus_aggregate"]["ev_shortfall_model_kwh"]["baseline_better_runs"] == 0
     # false done on EV: acknowledgement never beats measurement on EV shortfall
     assert pm("missed_ev_false_done", "ev_shortfall_model_kwh")["baseline_better_runs"] == 0
+    # honest reporting: acknowledgement already knows about the miss, so measurement adds nothing
+    assert pm("honest_misses", "ev_shortfall_model_kwh")["ties"] == 5
+    # imperfect sensing has a visible cost: replans that follow no missed action are counted, not hidden
+    assert any(r["replans_without_missed_action"] > 0 for r in rows if r["scenario"] == "noisy_sensors_mixed_reports")
     # infeasible request: shortfall visible for every policy, no fake completion
     assert all(r["ev_shortfall_model_kwh"] > 0 for r in rows if r["scenario"] == "infeasible_ev")
     # physical bounds in every run
