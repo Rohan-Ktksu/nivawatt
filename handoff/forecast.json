@@ -1,5 +1,5 @@
 {
-  "forecast_id": "fc-1c712d1172",
+  "forecast_id": "fc-2b76934f36",
   "schema_version": "0.2",
   "source_kind": "historical_replay",
   "source_name": "KPTCL daily load-curve reports, parsed by Vonter/kptcl-load-curve",
@@ -12,7 +12,7 @@
   "dataset_fingerprint": "61538bc849335f960bac29dae1a33e8d25221cfc0e3284f832fda320555331ff",
   "training_end": "2026-08-17T18:30:00Z",
   "last_observation_time": "2026-08-17T17:30:00Z",
-  "issued_at": "2026-11-07T06:24:56Z",
+  "issued_at": "2026-11-07T06:49:20Z",
   "availability_assumptions": "Historical replay. Assumes reports through D-2 were published by 00:00 IST of D; publication lag not validated. Not a live KPTCL/BESCOM connection.",
   "forecast_start": "2026-08-18T18:30:00Z",
   "forecast_end": "2026-08-19T18:30:00Z",

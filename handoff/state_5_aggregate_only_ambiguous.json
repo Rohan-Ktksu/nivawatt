@@ -1,0 +1,794 @@
+{
+  "schema_version": "0.2",
+  "run_id": "run-58b210ea8a",
+  "revision": 2,
+  "mode": "advisory",
+  "clock": {
+    "interval_index": 1,
+    "model_dt_minutes": 15,
+    "horizon_intervals": 96,
+    "model_time_utc": "2026-08-18T18:45:00Z",
+    "clock_start_utc": "2026-08-18T18:30:00Z",
+    "source_kind": "synthetic"
+  },
+  "apartment": {
+    "apartment_id": "APT_1",
+    "allowance_model_kw": 6.0,
+    "allowance_scope": "participating flexible loads (pump + EV-charging emulator) only",
+    "model_tank_l": 4440.0,
+    "model_tank_min_l": 3000,
+    "model_tank_max_l": 10000,
+    "source_water_available": true,
+    "pump_state": "UNKNOWN",
+    "pump_starts_observed": null,
+    "ev_sessions": [
+      {
+        "ev_id": "EV_1",
+        "arrival_interval": 0,
+        "departure_interval": 32,
+        "requested_model_kwh": 10,
+        "remaining_model_kwh": 10.0
+      }
+    ]
+  },
+  "active_commitment": {
+    "commitment_id": "c-4ad89a4877",
+    "proposal_id": "p-e33b8f17c3",
+    "option_id": "o1",
+    "status": "ACCEPTED",
+    "effective_from_interval": 0,
+    "accepted_at": "2026-11-07T06:49:20Z",
+    "option": {
+      "option_id": "o1",
+      "label": "Rules schedule: water reserve first, then EV energy, outside peak windows when possible",
+      "effective_from_interval": 0,
+      "actions": [
+        {
+          "interval_index": 0,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 1,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 2,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 3,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 4,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 5,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 6,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 7,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 8,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 9,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 10,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 11,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 12,
+          "pump": "OFF",
+          "ev": "EV_1"
+        },
+        {
+          "interval_index": 13,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 14,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 15,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 16,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 17,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 18,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 19,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 20,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 21,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 22,
+          "pump": "ON",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 23,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 24,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 25,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 26,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 27,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 28,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 29,
+          "pump": "ON",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 30,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 31,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 32,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 33,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 34,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 35,
+          "pump": "ON",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 36,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 37,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 38,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 39,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 40,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 41,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 42,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 43,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 44,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 45,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 46,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 47,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 48,
+          "pump": "ON",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 49,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 50,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 51,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 52,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 53,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 54,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 55,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 56,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 57,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 58,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 59,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 60,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 61,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 62,
+          "pump": "ON",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 63,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 64,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 65,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 66,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 67,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 68,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 69,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 70,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 71,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 72,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 73,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 74,
+          "pump": "ON",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 75,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 76,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 77,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 78,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 79,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 80,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 81,
+          "pump": "ON",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 82,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 83,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 84,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 85,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 86,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 87,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 88,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 89,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 90,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 91,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 92,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 93,
+          "pump": "ON",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 94,
+          "pump": "OFF",
+          "ev": "OFF"
+        },
+        {
+          "interval_index": 95,
+          "pump": "OFF",
+          "ev": "OFF"
+        }
+      ],
+      "predicted_peak_model_kw": 3.3,
+      "predicted_peak_window_energy_model_kwh": 0,
+      "water_trajectory_model_l": [
+        4440,
+        4380,
+        4320,
+        4260,
+        4200,
+        4140,
+        4080,
+        4020,
+        3960,
+        3900,
+        3840,
+        3780,
+        3720,
+        3660,
+        3600,
+        3540,
+        3480,
+        3420,
+        3360,
+        3300,
+        3190,
+        3080,
+        4470.0,
+        4360.0,
+        4110.0,
+        3860.0,
+        3610.0,
+        3360.0,
+        3110.0,
+        4360.0,
+        4110.0,
+        3860.0,
+        3610.0,
+        3360.0,
+        3110.0,
+        4360.0,
+        4250.0,
+        4140.0,
+        4030.0,
+        3920.0,
+        3810.0,
+        3700.0,
+        3590.0,
+        3480.0,
+        3370.0,
+        3260.0,
+        3150.0,
+        3040.0,
+        4430.0,
+        4320.0,
+        4210.0,
+        4100.0,
+        3990.0,
+        3880.0,
+        3770.0,
+        3660.0,
+        3550.0,
+        3440.0,
+        3330.0,
+        3220.0,
+        3110.0,
+        3000.0,
+        4390.0,
+        4280.0,
+        4170.0,
+        4060.0,
+        3950.0,
+        3840.0,
+        3730.0,
+        3620.0,
+        3510.0,
+        3400.0,
+        3200.0,
+        3000.0,
+        4300.0,
+        4100.0,
+        3900.0,
+        3700.0,
+        3500.0,
+        3300.0,
+        3100.0,
+        4400.0,
+        4200.0,
+        4000.0,
+        3890.0,
+        3780.0,
+        3670.0,
+        3560.0,
+        3450.0,
+        3340.0,
+        3230.0,
+        3120.0,
+        3010.0,
+        4400.0,
+        4290.0,
+        4180.0
+      ],
+      "predicted_min_tank_model_l": 3000.0,
+      "ev_energy_trajectory_model_kwh": {
+        "EV_1": [
+          0.825,
+          1.65,
+          2.475,
+          3.3,
+          4.125,
+          4.95,
+          5.775,
+          6.6,
+          7.425,
+          8.25,
+          9.075,
+          9.9,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0,
+          10.0
+        ]
+      },
+      "ev_shortfall_model_kwh": {
+        "EV_1": 0.0
+      },
+      "water_shortfall": {
+        "intervals_below_reserve": 0,
+        "unmet_withdrawal_l": 0.0
+      },
+      "pump_starts": {
+        "history": null,
+        "planned": 8
+      },
+      "requires_operator_exception": false,
+      "assumptions": [
+        "expected withdrawal profile is a planning estimate",
+        "source water available unless a known outage event says otherwise",
+        "manual switching; acceptance does not operate equipment"
+      ]
+    }
+  },
+  "pending_proposals": [],
+  "observation": {
+    "interval_index": 0,
+    "received_at_interval": 0,
+    "quality": "VALID",
+    "source_kind": "synthetic",
+    "measurement_scope": "aggregate",
+    "tank_l": 4440.0,
+    "aggregate_model_kw": 3.3,
+    "received_at": "2026-11-07T06:49:21Z",
+    "pump_model_kw": null,
+    "ev_model_kw": null,
+    "ev_id": null,
+    "branch_attribution": "AMBIGUOUS",
+    "model_power_kw": 3.3,
+    "raw_bench": null
+  },
+  "execution": {
+    "commitment_id": "c-4ad89a4877",
+    "interval_index": 0,
+    "claim": "NO_CLAIM",
+    "observation_status": "AMBIGUOUS",
+    "reason": "AGGREGATE_ONLY_BRANCH_UNATTRIBUTED",
+    "claims": [],
+    "next_action": {
+      "interval_index": 1,
+      "pump": "OFF",
+      "ev": "EV_1"
+    }
+  },
+  "readiness": {
+    "water_reserve_status": "ABOVE_MINIMUM",
+    "charging_status": "UNVERIFIED",
+    "charging_status_by_ev": {
+      "EV_1": "UNVERIFIED"
+    },
+    "verified_ev_delivered_model_kwh": null,
+    "verified_ev_delivered_by_ev_model_kwh": null,
+    "verified_ev_unavailable_reason": "AGGREGATE_ONLY_METERING: combined reading cannot be attributed to an EV"
+  },
+  "warnings": [
+    "SYNTHETIC apartment simulation. Not a field measurement.",
+    "Regional forecast and advisory do not establish local transformer or apartment capacity.",
+    "Aggregate-only metering: branch execution and per-EV energy are not verified; the tank sensor is separate."
+  ],
+  "forecast_id": null,
+  "active_advisory": null
+}

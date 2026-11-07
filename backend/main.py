@@ -282,7 +282,7 @@ def observed(r):
 
 def planning_state(r):
     p, obs = r["params"], observed(r)
-    valid = [o for o in obs if o["quality"] == "VALID"]
+    valid = [o for o in obs if o["quality"] in USABLE]
     last = valid[-1] if valid else None
     delivered = {s["ev_id"]: 0.0 for s in p["ev_sessions"]}
     dt_h = p["model_dt_minutes"] / 60
@@ -290,16 +290,19 @@ def planning_state(r):
     for o in valid:
         if o.get("ev_id"):
             delivered[o["ev_id"]] = delivered.get(o["ev_id"], 0) + o["ev_model_kw"] * dt_h
-        on = o["pump_model_kw"] > 0
-        starts += on and not prev
-        prev = on
+        if o["pump_model_kw"] is not None:  # unknown under aggregate-only metering
+            on = o["pump_model_kw"] > 0
+            starts += on and not prev
+            prev = on
+    agg = p["observation_scope"] == "aggregate"
     return {
         "interval_index": r["interval_index"],
         "tank_l": last["tank_l"] if last else p["tank_init_l"],
         "tank_source": "observation" if last else "initial_parameter",
-        "stale": bool(obs) and obs[-1]["quality"] != "VALID",
-        "pump_on": bool(last and last["pump_model_kw"] > 0),
-        "pump_starts_history": starts,
+        "stale": bool(obs) and obs[-1]["quality"] not in USABLE,
+        "aggregate_only": agg,
+        "pump_on": None if agg else bool(last and last["pump_model_kw"] > 0),
+        "pump_starts_history": None if agg else starts,
         "ev_delivered_observed_model_kwh": {k: round(v, 4) for k, v in delivered.items()},
     }
 
@@ -580,20 +583,32 @@ def post_claim(b: dict = Depends(body), sess=Depends(session)):
 
 
 # ---------- simulation step (operator) ----------
+USABLE = ("VALID", "LATE")  # LATE = real reading that arrived after its interval; never shown as live
+
+
 def judge(r, c, i, obs, prev_tank):
     """Compare one interval's observation with the committed action. Returns (status, reason)."""
-    if obs["quality"] != "VALID":
+    if obs["quality"] not in USABLE:
         return "STALE", "No valid observation for this interval."
     a = action_at(c, i) or {"pump": "OFF", "ev": "OFF"}
     p, problems = r["params"], []
+    late = " (late reading)" if obs["quality"] == "LATE" else ""
+    water_ok = obs["tank_l"] - prev_tank + p["withdrawal_profile_l"][i] >= 0.5 * p["pump_inflow_lph"] * p["model_dt_minutes"] / 60 \
+        or obs["tank_l"] >= p["tank_max_l"] - 1
+    if obs.get("measurement_scope") == "aggregate":
+        # One meter on the participating circuits: zero proves all off; non-zero cannot be attributed to a branch.
+        want_any = a["pump"] == "ON" or a["ev"] != "OFF"
+        if obs["aggregate_model_kw"] <= EV_ON_KW:
+            return ("OBSERVED_DEVIATION", "NO_PARTICIPATING_LOAD_OBSERVED" + late) if want_any else ("OBSERVED_MATCH", late.strip())
+        if a["pump"] == "ON" and not water_ok:  # the independent tank sensor still applies
+            return "OBSERVED_DEVIATION", "PUMP_WATER_DELIVERY_NOT_OBSERVED" + late
+        return "AMBIGUOUS", "AGGREGATE_ONLY_BRANCH_UNATTRIBUTED" + late
     pump_obs = obs["pump_model_kw"] > 0
     if a["pump"] == "ON":
         if not pump_obs:
             problems.append("PUMP_NOT_OBSERVED_ON")
-        else:
-            rise = obs["tank_l"] - prev_tank + p["withdrawal_profile_l"][i]
-            if rise < 0.5 * p["pump_inflow_lph"] * p["model_dt_minutes"] / 60 and obs["tank_l"] < p["tank_max_l"] - 1:
-                problems.append("PUMP_POWER_WITHOUT_WATER_DELIVERY")
+        elif not water_ok:
+            problems.append("PUMP_POWER_WITHOUT_WATER_DELIVERY")
     elif pump_obs:
         problems.append("PUMP_ON_NOT_PLANNED")
     ev_obs = obs["ev_model_kw"] > EV_ON_KW
@@ -601,7 +616,41 @@ def judge(r, c, i, obs, prev_tank):
         problems.append("EV_CHARGING_NOT_OBSERVED")
     if a["ev"] == "OFF" and ev_obs:
         problems.append("EV_CHARGING_NOT_PLANNED")
-    return ("OBSERVED_DEVIATION", ",".join(problems)) if problems else ("OBSERVED_MATCH", "")
+    return ("OBSERVED_DEVIATION", ",".join(problems) + late) if problems else ("OBSERVED_MATCH", late.strip())
+
+
+def make_observation(p, rec, received_interval, quality):
+    base = {"interval_index": rec["interval_index"], "received_at_interval": received_interval, "quality": quality,
+            "source_kind": p["source_kind"], "measurement_scope": p["observation_scope"], "tank_l": rec["tank_l"],
+            "aggregate_model_kw": rec["aggregate_model_kw"], "received_at": iso(now())}
+    if p["observation_scope"] == "aggregate":
+        return {**base, "pump_model_kw": None, "ev_model_kw": None, "ev_id": None,
+                "branch_attribution": "AMBIGUOUS" if rec["aggregate_model_kw"] > EV_ON_KW else "AGGREGATE_ZERO"}
+    return {**base, "pump_model_kw": rec["pump_model_kw"], "ev_model_kw": rec["ev_model_kw"], "ev_id": rec["ev_id"],
+            "branch_attribution": "SYNTHETIC_KNOWN"}
+
+
+def commitment_at(run_id, i):
+    row = db.one("SELECT * FROM commitments WHERE run_id=? AND effective_from_interval<=? AND status IN ('ACCEPTED','SUPERSEDED') "
+                 "AND (ended_at_interval IS NULL OR ended_at_interval>?) ORDER BY accepted_at DESC LIMIT 1", run_id, i, i)
+    return {**dict(row), "body": json.loads(row["body"])} if row else None
+
+
+def tank_before(r, i):
+    rows = [o for o in observed(r) if o["quality"] in USABLE and o["interval_index"] < i]
+    return rows[-1]["tank_l"] if rows else r["params"]["tank_init_l"]
+
+
+def record_observation(r, obs):
+    """Store an observation and judge it against the commitment that covered its interval."""
+    run_id, i = r["run_id"], obs["interval_index"]
+    db.ex("INSERT OR REPLACE INTO observations VALUES(?,?,?)", run_id, i, db.dumps(obs))
+    c = commitment_at(run_id, i)
+    if not c:
+        return None
+    status, reason = judge(r, c, i, obs, tank_before(r, i))
+    db.ex("INSERT OR REPLACE INTO executions VALUES(?,?,?,?,?)", run_id, c["commitment_id"], i, status, reason)
+    return {"commitment_id": c["commitment_id"], "interval_index": i, "observation_status": status, "reason": reason}
 
 
 @app.post("/api/v1/runs/{run_id}/step")
@@ -614,41 +663,43 @@ def step_run(run_id: str, b: dict = Depends(body), sess=Depends(session)):
         i = r["interval_index"]
         if i >= p["horizon_intervals"]:
             raise ApiError(409, "RUN_FINISHED", "horizon reached", r["revision"])
+        if b.get("drop_observation") and b.get("delay_observation"):
+            raise ApiError(422, "INVALID_STEP", "choose drop_observation or delay_observation, not both")
         sw = b.get("actual_switches") or {}
         for k in sw:
             if k not in ("pump", "ev") or sw[k] not in ("ON", "OFF"):
                 raise ApiError(422, "INVALID_SWITCH", "actual_switches: {pump|ev: ON|OFF}")
+        verdicts = []
+        held = r["truth"].pop("held_reading", None)  # a reading in transit from an earlier interval
+        if held:
+            verdicts.append(record_observation(r, make_observation(p, held, i, "LATE")))
         pump_on = sw.get("pump", "ON" if r["truth"]["pump_on"] else "OFF") == "ON"
         ev_on = sw.get("ev", "ON" if r["truth"]["ev_on"] else "OFF") == "ON"
-        prev_obs = [o for o in observed(r) if o["quality"] == "VALID"]
-        prev_tank = prev_obs[-1]["tank_l"] if prev_obs else p["tank_init_l"]
         r["truth"], rec = plant.step(r["truth"], p, i, pump_on, ev_on)
         rec["allowance_model_kw"] = p["allowance_model_kw"]
         db.ex("INSERT INTO truth_log VALUES(?,?,?)", run_id, i, db.dumps(rec))
-        if b.get("drop_observation"):
-            obs = {"interval_index": i, "quality": "STALE", "source_kind": "synthetic", "tank_l": None,
-                   "pump_model_kw": None, "ev_model_kw": None, "ev_id": None, "aggregate_model_kw": None,
-                   "branch_attribution": "UNKNOWN", "received_at": None}
+        if b.get("drop_observation") or b.get("delay_observation"):
+            if b.get("delay_observation"):
+                r["truth"]["held_reading"] = rec  # delivered as LATE at the next step
+            gap = {"interval_index": i, "received_at_interval": None, "quality": "STALE", "source_kind": p["source_kind"],
+                   "measurement_scope": p["observation_scope"], "tank_l": None, "pump_model_kw": None, "ev_model_kw": None,
+                   "ev_id": None, "aggregate_model_kw": None, "branch_attribution": "UNKNOWN", "received_at": None}
+            verdicts.append(record_observation(r, gap))
         else:
-            obs = {"interval_index": i, "quality": "VALID", "source_kind": "synthetic", "tank_l": rec["tank_l"],
-                   "pump_model_kw": rec["pump_model_kw"], "ev_model_kw": rec["ev_model_kw"], "ev_id": rec["ev_id"],
-                   "aggregate_model_kw": rec["aggregate_model_kw"], "branch_attribution": "SYNTHETIC_KNOWN",
-                   "received_at": iso(now())}
-        db.ex("INSERT INTO observations VALUES(?,?,?)", run_id, i, db.dumps(obs))
-        c = active_commitment(run_id)
-        verdict = None
-        if c and c["effective_from_interval"] <= i:
-            status, reason = judge(r, c, i, obs, prev_tank)
-            db.ex("INSERT OR REPLACE INTO executions VALUES(?,?,?,?,?)", run_id, c["commitment_id"], i, status, reason)
-            verdict = {"commitment_id": c["commitment_id"], "interval_index": i, "observation_status": status, "reason": reason}
+            verdicts.append(record_observation(r, make_observation(p, rec, i, "VALID")))
+        verdicts = [v for v in verdicts if v]
         r["interval_index"] = i + 1
         apply_due_events(r)
-        if verdict and verdict["observation_status"] == "OBSERVED_DEVIATION" and not pending(run_id):
+        dev = [v for v in verdicts if v["observation_status"] == "OBSERVED_DEVIATION"]
+        if dev and not pending(run_id):
+            v = dev[-1]
             claimed = db.one("SELECT 1 FROM claims WHERE run_id=? AND commitment_id=? AND interval_index=?",
-                             run_id, c["commitment_id"], i)
+                             run_id, v["commitment_id"], v["interval_index"])
             replan(r, "CLAIM_WITHOUT_OBSERVED_EXECUTION" if claimed else "OBSERVED_DEVIATION")
         save_run(r)
-        return {"stepped_interval": i, "execution": verdict, "state": state_doc(run_id)}
+        cur = next((v for v in verdicts if v["interval_index"] == i), None)
+        late = next((v for v in verdicts if v["interval_index"] != i), None)
+        return {"stepped_interval": i, "execution": cur, "late_execution": late, "state": state_doc(run_id)}
     return idempotent("step:" + run_id, b.get("request_id"), b, make)
 
 
@@ -716,6 +767,8 @@ def state_doc(run_id):
                      "next_action": action_at(c, i)}
     warnings = ["SYNTHETIC apartment simulation. Not a field measurement.",
                 "Regional forecast and advisory do not establish local transformer or apartment capacity."]
+    if ps["aggregate_only"]:
+        warnings.append("Aggregate-only metering: branch execution and per-EV energy are not verified; the tank sensor is separate.")
     if ps["stale"]:
         warnings.append("Latest observation is STALE; planning uses the last valid observation.")
     warnings += r.get("_warnings", [])
@@ -729,7 +782,7 @@ def state_doc(run_id):
                       "allowance_scope": "participating flexible loads (pump + EV-charging emulator) only",
                       "model_tank_l": ps["tank_l"], "model_tank_min_l": p["tank_min_l"], "model_tank_max_l": p["tank_max_l"],
                       "source_water_available": i not in p.get("known_outage_intervals", []),
-                      "pump_state": "UNKNOWN" if ps["stale"] else ("ON" if ps["pump_on"] else "OFF"),
+                      "pump_state": "UNKNOWN" if ps["stale"] or ps["pump_on"] is None else ("ON" if ps["pump_on"] else "OFF"),
                       "pump_starts_observed": ps["pump_starts_history"],
                       "ev_sessions": [{**s, "remaining_model_kwh": remaining[s["ev_id"]]} for s in p["ev_sessions"]]},
         "active_commitment": None if not c else {"commitment_id": c["commitment_id"], "proposal_id": c["proposal_id"],
@@ -743,10 +796,15 @@ def state_doc(run_id):
         "readiness": {"water_reserve_status": "UNKNOWN" if ps["stale"] else
                       ("ABOVE_MINIMUM" if ps["tank_l"] >= p["tank_min_l"] else "BELOW_MINIMUM"),
                       # fixture fields keep their v0.1 types; per-EV detail is additive
-                      "charging_status": "MET" if all(v <= 1e-9 for v in remaining.values()) else "PENDING",
-                      "charging_status_by_ev": {k: ("MET" if v <= 1e-9 else "PENDING") for k, v in remaining.items()},
-                      "verified_ev_delivered_model_kwh": round(sum(ps["ev_delivered_observed_model_kwh"].values()), 4) if obs else None,
-                      "verified_ev_delivered_by_ev_model_kwh": ps["ev_delivered_observed_model_kwh"]},
+                      "charging_status": "UNVERIFIED" if ps["aggregate_only"] else
+                      ("MET" if all(v <= 1e-9 for v in remaining.values()) else "PENDING"),
+                      "charging_status_by_ev": {k: ("UNVERIFIED" if ps["aggregate_only"] else "MET" if v <= 1e-9 else "PENDING")
+                                                for k, v in remaining.items()},
+                      "verified_ev_delivered_model_kwh": None if ps["aggregate_only"] or not obs else
+                      round(sum(ps["ev_delivered_observed_model_kwh"].values()), 4),
+                      "verified_ev_delivered_by_ev_model_kwh": None if ps["aggregate_only"] else ps["ev_delivered_observed_model_kwh"],
+                      "verified_ev_unavailable_reason": "AGGREGATE_ONLY_METERING: combined reading cannot be attributed to an EV"
+                      if ps["aggregate_only"] else None},
         "warnings": warnings,
         "forecast_id": adv["forecast_id"] if adv else None,
         "active_advisory": adv,
@@ -772,7 +830,7 @@ def get_operator_state(run_id: str, sess=Depends(session)):
         events = [json.loads(e["body"]) | {"applied": bool(e["applied"])} for e in
                   db.q("SELECT body, applied FROM events WHERE run_id=? ORDER BY created_at", run_id)]
         n = s["clock"]["interval_index"]
-        valid = db.one("SELECT COUNT(*) n FROM observations WHERE run_id=? AND body LIKE '%\"quality\":\"VALID\"%'", run_id)["n"]
+        valid = db.one("SELECT COUNT(*) n FROM observations WHERE run_id=? AND (body LIKE '%\"quality\":\"VALID\"%' OR body LIKE '%\"quality\":\"LATE\"%')", run_id)["n"]
         return {"schema_version": SCHEMA_VERSION, "run_id": run_id, "revision": s["revision"], "clock": s["clock"],
                 "participating_scope": "pump + EV-charging emulator per apartment; background load unmetered (unknown)",
                 "apartments": [{"apartment_id": s["apartment"]["apartment_id"], "allowance_model_kw": s["apartment"]["allowance_model_kw"],
@@ -804,10 +862,46 @@ def report(run_id: str, sess=Depends(session)):
                        "observed_deviations": cnt("SELECT COUNT(*) n FROM executions WHERE run_id=? AND observation_status='OBSERVED_DEVIATION'"),
                        "claims_contradicted": cnt("SELECT COUNT(*) n FROM claims c JOIN executions e ON e.commitment_id=c.commitment_id "
                                                   "AND e.interval_index=c.interval_index WHERE c.run_id=? AND e.observation_status='OBSERVED_DEVIATION'")}
-        m["observation_coverage"] = {"intervals_elapsed": len(truth), "valid": sum(o["quality"] == "VALID" for o in obs)}
+        m["observation_coverage"] = {"intervals_elapsed": len(truth), "valid": sum(o["quality"] in USABLE for o in obs),
+                                     "late": sum(o["quality"] == "LATE" for o in obs),
+                                     "measurement_scope": r["params"]["observation_scope"]}
         m["provenance"] = {"source_kind": "synthetic", "plant": "simulation.plant (evaluator truth)",
                            "advisory_id": r["active_advisory_id"], "computed_at": iso(now())}
         return m
+
+
+# ---------- experiments (simulated policy comparison) ----------
+@app.post("/api/v1/experiments")
+def post_experiment(b: dict = Depends(body), sess=Depends(session)):
+    require(sess, "operator")
+    from simulation import experiment
+
+    def make():
+        seeds = b.get("seeds_per_scenario", 20)
+        if not isinstance(seeds, int) or not 1 <= seeds <= 50:
+            raise ApiError(422, "INVALID_SEEDS", "seeds_per_scenario must be 1..50")
+        peaks = None
+        if b.get("run_id"):  # use that run's active advisory hours
+            r = load_run(b["run_id"])
+            peaks = known_events(r)["peak_intervals"]
+        try:
+            rows, summary, cfg = experiment.run(b.get("scenarios"), b.get("policies"), seeds, peaks)
+        except ValueError as e:
+            raise ApiError(422, "INVALID_EXPERIMENT", str(e))
+        eid, d = experiment.export(rows, summary, cfg)
+        doc = json.loads((d / "summary.json").read_text())
+        doc.update({"status": "COMPLETED", "runs_csv": str(d / "runs.csv"), "runs": rows})
+        db.ex("INSERT INTO experiments VALUES(?,?,?)", eid, db.dumps(doc), iso(now()))
+        return {"experiment_id": eid, "status": "COMPLETED", "runs": len(rows)}
+    return idempotent("experiment", b.get("request_id"), b, make)
+
+
+@app.get("/api/v1/experiments/{eid}")
+def get_experiment(eid: str, sess=Depends(session)):
+    row = db.one("SELECT body FROM experiments WHERE experiment_id=?", eid)
+    if not row:
+        raise ApiError(404, "UNKNOWN_EXPERIMENT", f"experiment {eid} not found")
+    return json.loads(row["body"])
 
 
 # ---------- same-origin web assets (web/ is owned by the UI workstream) ----------

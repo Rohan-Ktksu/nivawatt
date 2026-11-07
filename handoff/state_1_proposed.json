@@ -1,6 +1,6 @@
 {
   "schema_version": "0.2",
-  "run_id": "run-621a868aae",
+  "run_id": "run-9f72ca3fbe",
   "revision": 1,
   "mode": "advisory",
   "clock": {
@@ -34,23 +34,24 @@
   "active_commitment": null,
   "pending_proposals": [
     {
-      "proposal_id": "p-baedddb70d",
-      "run_id": "run-621a868aae",
+      "proposal_id": "p-c320bb620f",
+      "run_id": "run-9f72ca3fbe",
       "apartment_id": "APT_1",
       "revision": 1,
       "status": "PROPOSED",
       "reason": "PEAK_ADVISORY_ISSUED",
       "source": "rules",
-      "computation_ms": 1.1,
-      "created_at": "2026-11-07T06:24:57Z",
-      "expires_at": "2026-11-07T06:39:57Z",
-      "advisory_id": "ev-8901de4529",
-      "forecast_id": "fc-1c712d1172",
+      "computation_ms": 1.85,
+      "created_at": "2026-11-07T06:49:20Z",
+      "expires_at": "2026-11-07T07:04:20Z",
+      "advisory_id": "ev-002cb27711",
+      "forecast_id": "fc-2b76934f36",
       "planning_inputs": {
         "interval_index": 0,
         "tank_l": 4500,
         "tank_source": "initial_parameter",
         "stale": false,
+        "aggregate_only": false,
         "pump_on": false,
         "pump_starts_history": 0,
         "ev_delivered_observed_model_kwh": {
@@ -778,19 +779,20 @@
     "verified_ev_delivered_model_kwh": null,
     "verified_ev_delivered_by_ev_model_kwh": {
       "EV_1": 0.0
-    }
+    },
+    "verified_ev_unavailable_reason": null
   },
   "warnings": [
     "SYNTHETIC apartment simulation. Not a field measurement.",
     "Regional forecast and advisory do not establish local transformer or apartment capacity."
   ],
-  "forecast_id": "fc-1c712d1172",
+  "forecast_id": "fc-2b76934f36",
   "active_advisory": {
-    "advisory_id": "ev-8901de4529",
-    "event_id": "ev-8901de4529",
+    "advisory_id": "ev-002cb27711",
+    "event_id": "ev-002cb27711",
     "kind": "peak_advisory",
-    "run_id": "run-621a868aae",
-    "forecast_id": "fc-1c712d1172",
+    "run_id": "run-9f72ca3fbe",
+    "forecast_id": "fc-2b76934f36",
     "approved_by_demo_operator": "demo-operator",
     "geographic_scope": "Karnataka state grid (KPTCL). Not BESCOM feeder, transformer or apartment demand.",
     "valid_from": "2026-08-18T18:30:00Z",
@@ -815,6 +817,6 @@
     "source_kind": "historical_replay",
     "known_from_interval": 0,
     "_note": "Prototype peak advisory from a regional forecast. Not a BESCOM instruction or a capacity limit.",
-    "issued_at": "2026-11-07T06:24:57Z"
+    "issued_at": "2026-11-07T06:49:20Z"
   }
 }

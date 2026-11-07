@@ -33,12 +33,14 @@
   },
   "observation_coverage": {
     "intervals_elapsed": 2,
-    "valid": 2
+    "valid": 2,
+    "late": 0,
+    "measurement_scope": "branch"
   },
   "provenance": {
     "source_kind": "synthetic",
     "plant": "simulation.plant (evaluator truth)",
-    "advisory_id": "ev-8901de4529",
-    "computed_at": "2026-11-07T06:24:57Z"
+    "advisory_id": "ev-002cb27711",
+    "computed_at": "2026-11-07T06:49:20Z"
   }
 }
