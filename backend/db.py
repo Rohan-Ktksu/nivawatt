@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS executions(run_id TEXT, commitment_id TEXT, interval_
 CREATE TABLE IF NOT EXISTS truth_log(run_id TEXT, interval_index INT, body TEXT, PRIMARY KEY(run_id, interval_index));
 CREATE TABLE IF NOT EXISTS telemetry(id INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT, device_id TEXT,
   device_session_id TEXT, seq_num INT, received_at TEXT, status TEXT, body TEXT);
+CREATE TABLE IF NOT EXISTS experiments(experiment_id TEXT PRIMARY KEY, body TEXT, created_at TEXT);
 """
 
 _conn = None

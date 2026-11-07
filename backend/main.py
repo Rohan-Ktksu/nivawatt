@@ -810,6 +810,40 @@ def report(run_id: str, sess=Depends(session)):
         return m
 
 
+# ---------- experiments (simulated policy comparison) ----------
+@app.post("/api/v1/experiments")
+def post_experiment(b: dict = Depends(body), sess=Depends(session)):
+    require(sess, "operator")
+    from simulation import experiment
+
+    def make():
+        seeds = b.get("seeds_per_scenario", 20)
+        if not isinstance(seeds, int) or not 1 <= seeds <= 50:
+            raise ApiError(422, "INVALID_SEEDS", "seeds_per_scenario must be 1..50")
+        peaks = None
+        if b.get("run_id"):  # use that run's active advisory hours
+            r = load_run(b["run_id"])
+            peaks = known_events(r)["peak_intervals"]
+        try:
+            rows, summary, cfg = experiment.run(b.get("scenarios"), b.get("policies"), seeds, peaks)
+        except ValueError as e:
+            raise ApiError(422, "INVALID_EXPERIMENT", str(e))
+        eid, d = experiment.export(rows, summary, cfg)
+        doc = json.loads((d / "summary.json").read_text())
+        doc.update({"status": "COMPLETED", "runs_csv": str(d / "runs.csv"), "runs": rows})
+        db.ex("INSERT INTO experiments VALUES(?,?,?)", eid, db.dumps(doc), iso(now()))
+        return {"experiment_id": eid, "status": "COMPLETED", "runs": len(rows)}
+    return idempotent("experiment", b.get("request_id"), b, make)
+
+
+@app.get("/api/v1/experiments/{eid}")
+def get_experiment(eid: str, sess=Depends(session)):
+    row = db.one("SELECT body FROM experiments WHERE experiment_id=?", eid)
+    if not row:
+        raise ApiError(404, "UNKNOWN_EXPERIMENT", f"experiment {eid} not found")
+    return json.loads(row["body"])
+
+
 # ---------- same-origin web assets (web/ is owned by the UI workstream) ----------
 def _page(name):
     f = WEB / f"{name}.html"

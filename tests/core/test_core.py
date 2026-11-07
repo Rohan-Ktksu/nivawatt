@@ -20,6 +20,7 @@ def api(tmp_path, monkeypatch):
     codes.write_text(json.dumps({"operator_code": "op", "manager_codes": {"APT_1": "m1", "APT_2": "m2"},
                                  "device_tokens": {"bench-1": "devtok"}}))
     monkeypatch.setenv("NIVAWATT_CODES", str(codes))
+    monkeypatch.setenv("NIVAWATT_RESULTS_DIR", str(tmp_path / "exp"))
     from backend import db, main
     db.reset()
     c = TestClient(main.app)
@@ -307,3 +308,31 @@ def test_forecast_replay_api_persists_immutable_snapshot(api):
 def test_top3_tie_breaks_earliest():
     idx, _ = models.top3(np.array([5.0] * 24), pd.Timestamp("2026-01-01 18:30"))
     assert idx == [0, 1, 2]
+
+
+# ---------- comparison experiment ----------
+def test_experiment_fairness_properties():
+    from simulation import experiment
+    rows, summary, _ = experiment.run(n_seeds=5)
+    pm = lambda s, m: summary[s]["paired_measured_minus_ack"][m]
+    # perfect truthful execution: measured and acknowledgement replanning tie
+    assert all(v["ties"] == v["measured_better_runs"] + v["ack_better_runs"] + v["ties"]
+               for v in summary["perfect"]["paired_measured_minus_ack"].values())
+    # pump misses are visible to both through the same tank observations
+    assert pm("missed_pump_false_done", "reserve_violation_intervals")["ties"] == 5
+    # false done on EV: acknowledgement never beats measurement on EV shortfall
+    assert pm("missed_ev_false_done", "ev_shortfall_model_kwh")["ack_better_runs"] == 0
+    # infeasible request: shortfall visible for every policy, no fake completion
+    assert all(r["ev_shortfall_model_kwh"] > 0 for r in rows if r["scenario"] == "infeasible_ev")
+    # physical bounds in every run
+    assert all(0 <= r["final_tank_l"] <= 10000 for r in rows)
+
+
+def test_experiment_api(api):
+    c = api
+    body = {"request_id": "e1", "scenarios": ["perfect", "missed_ev_false_done"], "seeds_per_scenario": 3}
+    assert c.post("/api/v1/experiments", headers=c.mgr, json=body).status_code == 403
+    r = c.post("/api/v1/experiments", headers=c.op, json=body).json()
+    doc = c.get(f"/api/v1/experiments/{r['experiment_id']}", headers=c.op).json()
+    assert doc["status"] == "COMPLETED" and doc["source_kind"] == "synthetic_simulation" and len(doc["runs"]) == r["runs"] == 20
+    assert c.post("/api/v1/experiments", headers=c.op, json={**body, "request_id": "e2", "policies": ["magic"]}).status_code == 422

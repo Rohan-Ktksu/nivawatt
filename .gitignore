@@ -6,3 +6,5 @@ runtime/
 config/local.json
 data/raw/
 *.db
+results/experiments/*
+!results/experiments/exp-default/
