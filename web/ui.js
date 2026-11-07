@@ -112,9 +112,6 @@ const NW_UI = (() => {
     return `${pump}, ${ev}`;
   }
 
-  // Aggregate metering cannot credit any EV, so "remaining" is not known there.
-  const evRemaining = (state, session) => (state.readiness.charging_status_by_ev?.[session.ev_id] === 'UNVERIFIED' ? null : session.remaining_model_kwh);
-
   // The recommended next action comes from the accepted commitment only. A pending proposal is never advice to act on.
   function recommendation(state) {
     const pending = state.pending_proposals || [];
@@ -172,7 +169,7 @@ const NW_UI = (() => {
     DATASET_UNAVAILABLE: 'The demand dataset is not on this computer. Run scripts/fetch_kptcl.py, then restart the service.',
   }[e.code] || e.message);
 
-  return { esc, html, fmtTime, fmtClock, mergeWindows, fmtWindows, inWindows, intervalTime, fmtNum, fmtSource, fmtReason, fmtStatus, fmtRevisionReason, fmtQuality, fmtScope, fmtAction, evRemaining, recommendation, shortfalls, fmtError };
+  return { esc, html, fmtTime, fmtClock, mergeWindows, fmtWindows, inWindows, intervalTime, fmtNum, fmtSource, fmtReason, fmtStatus, fmtRevisionReason, fmtQuality, fmtScope, fmtAction, recommendation, shortfalls, fmtError };
 })();
 
 if (typeof module !== 'undefined') module.exports = NW_UI;

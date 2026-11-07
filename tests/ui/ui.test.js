@@ -66,12 +66,6 @@ test('a pending proposal is never given as the action to take', () => {
   assert.ok(r.why.some((w) => /still your plan/.test(w)));
 });
 
-test('aggregate metering leaves remaining EV energy unknown', () => {
-  const session = { ev_id: 'EV_1', remaining_model_kwh: 10 };
-  assert.strictEqual(ui.evRemaining(baseState({ readiness: { charging_status_by_ev: { EV_1: 'UNVERIFIED' } } }), session), null);
-  assert.strictEqual(ui.evRemaining(baseState({ readiness: { charging_status_by_ev: { EV_1: 'PENDING' } } }), session), 10);
-});
-
 test('only real shortfalls are reported', () => {
   assert.deepStrictEqual(ui.shortfalls({ ev_shortfall_model_kwh: { EV_1: 0 }, water_shortfall: { intervals_below_reserve: 0, unmet_withdrawal_l: 0 } }), []);
   const out = ui.shortfalls({ ev_shortfall_model_kwh: { EV_1: 13.6 }, water_shortfall: { intervals_below_reserve: 2, unmet_withdrawal_l: 50 } });

@@ -62,6 +62,9 @@
               </select>
             </label>
             <div class="buttons"><button id="create-run" type="button">Start new run</button></div>
+            <label class="field" style="margin-top:.75rem">Open an earlier run
+              <select id="run-picker"></select>
+            </label>
             <div id="run-link"></div>
           </section>
           <section class="panel" id="sim" hidden>
@@ -89,6 +92,12 @@
           </section>
         </div>
       </div>
+      <section class="panel">
+        <h2>Policy comparison</h2>
+        <p>Runs every scheduling policy through the same simulated scenarios. All values come from the service. This is a simulation, not a bench or field result.</p>
+        <div class="buttons"><button id="run-comparison" type="button">Run simulated comparison</button></div>
+        <div id="comparison"></div>
+      </section>
       <p><button type="button" id="sign-out">Sign out</button></p>
     </div>
   </main>

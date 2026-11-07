@@ -107,6 +107,9 @@ button.claim { background: var(--warn-bg); border: 2px dashed var(--warn); color
   .ledger > div + div { border-left: 0; border-top: 2px solid var(--ink); }
 }
 
+.entry { border-top: 1px solid var(--line); padding: .5rem 0; }
+.entry p { margin-bottom: .25rem; }
+
 /* Tank: a vertical water column with its reserve line. */
 .tank-row { display: flex; gap: 1rem; align-items: stretch; }
 .tank { position: relative; flex: none; width: 4.5rem; height: 11rem; border: 2px solid var(--ink); border-top-width: 1px; border-radius: 0 0 6px 6px; background: #f3f6f6; overflow: hidden; }
