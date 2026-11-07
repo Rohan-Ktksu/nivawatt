@@ -77,3 +77,8 @@ Include forecast source/scope and held-out baseline comparison alongside the exe
 ## Release evidence
 
 Rohan supplies tested install/start commands, a known-good commit, actual test output and a run export. Sonia records phone/browser checks and screenshots. Teammate 3 records hardware inventory, calibration, manual-test results and rehearsal gaps. Evidence is NOT RUN until actually observed. Keep a fully local synthetic fallback, clearly labelled.
+
+
+## Smart-meter evidence update, 7 November 2026
+
+Read [SMART_METER_EVIDENCE.md](SMART_METER_EVIDENCE.md). Continue the working build with local branch sensing. Utility interval-data access, latency and load identification remain unverified integration assumptions. Aggregate consumption visibility is not branch execution proof. Add the aggregate-only, stale-data and pump-without-water cases to validation. Use existing API fields first; any new fields require Rohan/Sonia contract review. The evidence gap does not establish absence of utility functionality or novelty. Do not upload private bills or customer identifiers.

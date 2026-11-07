@@ -24,3 +24,8 @@ Chronological leakage and scope; forecast/advisory persistence and authorization
 Target a first connected software demonstration in a focused session. Hardware and defensible results may take another session. Keep synthetic fallbacks visibly labelled while real-data/hardware gates remain incomplete. No paid services, BESS, FDIA, transformer-health prediction, automatic mains control, unsupported savings or automatic main merge.
 
 Record actual commands/results and peer requests in COORDINATION_ROHAN.md. Implement the first gate now rather than writing another project plan.
+
+
+## Smart-meter evidence update, 7 November 2026
+
+Read [SMART_METER_EVIDENCE.md](SMART_METER_EVIDENCE.md). Continue the working build with local branch sensing. Utility interval-data access, latency and load identification remain unverified integration assumptions. Aggregate consumption visibility is not branch execution proof. Add the aggregate-only, stale-data and pump-without-water cases to validation. Use existing API fields first; any new fields require Rohan/Sonia contract review. The evidence gap does not establish absence of utility functionality or novelty. Do not upload private bills or customer identifiers.
