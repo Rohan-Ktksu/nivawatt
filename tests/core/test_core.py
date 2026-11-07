@@ -393,3 +393,35 @@ def test_late_reading_keeps_gap_then_arrives_marked_late(api):
     assert o0["quality"] == "LATE" and o0["received_at_interval"] == 1 and o0["interval_index"] == 0
     assert c.post(f"/api/v1/runs/{run}/step", headers=c.op,
                   json={"request_id": "bad", "drop_observation": True, "delay_observation": True}).status_code == 422
+
+
+def test_concurrent_authorized_reads_do_not_fail(api):
+    """Regression: unlocked reads on the shared SQLite connection gave false 401/403/500 under concurrency."""
+    from concurrent.futures import ThreadPoolExecutor
+    c = api
+    run = new_run(c)
+    get = lambda _: c.get(f"/api/v1/operator/state?run_id={run}", headers=c.op).status_code
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        codes = list(pool.map(get, range(400)))
+    assert codes.count(200) == 400, {k: codes.count(k) for k in set(codes)}
+
+
+def test_sonia_followups_scoping_history_listing(api):
+    c = api
+    assert c.post("/api/v1/runs", headers=c.op, json={"request_id": "bad-param", "clock_start_utc": FS,
+                  "apartment_params": {"observation_scop": "aggregate"}}).status_code == 422  # typo is rejected, not ignored
+    run, acts = accepted_run(c, observation_scope="aggregate")
+    assert all(e["remaining_model_kwh"] is None for e in state(c, run)["apartment"]["ev_sessions"])
+    com = state(c, run)["active_commitment"]
+    c.post("/api/v1/execution/claims", headers=c.mgr, json={"run_id": run, "commitment_id": com["commitment_id"],
+           "interval_index": 0, "action_id": f"{com['commitment_id']}:0:ev", "request_id": "cl0"})
+    step(c, run, "s0", delay_observation=True, actual_switches={"pump": "OFF", "ev": "OFF"})
+    step(c, run, "s1")
+    h = state(c, run)["execution_history"]
+    first = next(x for x in h if x["interval_index"] == 0)
+    assert first["claims"] and first["quality"] == "LATE" and first["received_at_interval"] == 1
+    mrep = c.get(f"/api/v1/runs/{run}/report", headers=c.mgr).json()
+    assert "peak_participating_model_kw" not in mrep and "ev_delivered_model_kwh" not in mrep and "counts" in mrep
+    assert "peak_participating_model_kw" in c.get(f"/api/v1/runs/{run}/report", headers=c.op).json()
+    assert run in [x["run_id"] for x in c.get("/api/v1/runs", headers=c.op).json()["runs"]]
+    assert c.get("/api/v1/runs", headers=c.mgr).status_code == 403

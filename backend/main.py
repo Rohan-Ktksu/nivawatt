@@ -784,7 +784,8 @@ def state_doc(run_id):
                       "source_water_available": i not in p.get("known_outage_intervals", []),
                       "pump_state": "UNKNOWN" if ps["stale"] or ps["pump_on"] is None else ("ON" if ps["pump_on"] else "OFF"),
                       "pump_starts_observed": ps["pump_starts_history"],
-                      "ev_sessions": [{**s, "remaining_model_kwh": remaining[s["ev_id"]]} for s in p["ev_sessions"]]},
+                      "ev_sessions": [{**s, "remaining_model_kwh": None if ps["aggregate_only"] else remaining[s["ev_id"]]}
+                                      for s in p["ev_sessions"]]},
         "active_commitment": None if not c else {"commitment_id": c["commitment_id"], "proposal_id": c["proposal_id"],
                                                  "option_id": c["option_id"], "status": c["status"],
                                                  "effective_from_interval": c["effective_from_interval"],
@@ -793,6 +794,7 @@ def state_doc(run_id):
         "observation": None if not last_obs else {**last_obs, "model_power_kw": last_obs["aggregate_model_kw"],
                                                   "raw_bench": latest_raw(run_id)},
         "execution": execution,
+        "execution_history": execution_history(run_id),
         "readiness": {"water_reserve_status": "UNKNOWN" if ps["stale"] else
                       ("ABOVE_MINIMUM" if ps["tank_l"] >= p["tank_min_l"] else "BELOW_MINIMUM"),
                       # fixture fields keep their v0.1 types; per-EV detail is additive
@@ -809,6 +811,35 @@ def state_doc(run_id):
         "forecast_id": adv["forecast_id"] if adv else None,
         "active_advisory": adv,
     }
+
+
+def execution_history(run_id):
+    """Every judged interval and every claim across all commitments (claims kept even when contradicted)."""
+    ex = {(e["commitment_id"], e["interval_index"]): dict(e) for e in
+          db.q("SELECT commitment_id, interval_index, observation_status, reason FROM executions WHERE run_id=?", run_id)}
+    claims = db.q("SELECT commitment_id, interval_index, action_id, claimed_at FROM claims WHERE run_id=?", run_id)
+    out = {k: {**v, "claims": []} for k, v in ex.items()}
+    for cl in claims:
+        key = (cl["commitment_id"], cl["interval_index"])
+        out.setdefault(key, {"commitment_id": key[0], "interval_index": key[1], "observation_status": "UNOBSERVED",
+                             "reason": "", "claims": []})["claims"].append({"action_id": cl["action_id"], "claimed_at": cl["claimed_at"]})
+    obs = {o["interval_index"]: o for o in (json.loads(x["body"]) for x in
+           db.q("SELECT body FROM observations WHERE run_id=?", run_id))}
+    for v in out.values():
+        o = obs.get(v["interval_index"])
+        v["quality"] = o["quality"] if o else None
+        v["received_at_interval"] = o.get("received_at_interval") if o else None
+    return sorted(out.values(), key=lambda v: (v["interval_index"], v["commitment_id"]))
+
+
+@app.get("/api/v1/runs")
+def list_runs(sess=Depends(session)):
+    require(sess, "operator")
+    rows = db.q("SELECT run_id, params, interval_index, revision, clock_start_utc, created_at FROM runs ORDER BY created_at DESC")
+    return {"runs": [{"run_id": x["run_id"], "apartment_id": json.loads(x["params"])["apartment_id"],
+                      "observation_scope": json.loads(x["params"])["observation_scope"], "interval_index": x["interval_index"],
+                      "revision": x["revision"], "clock_start_utc": x["clock_start_utc"], "created_at": x["created_at"]}
+                     for x in rows]}
 
 
 @app.get("/api/v1/state")
@@ -867,6 +898,10 @@ def report(run_id: str, sess=Depends(session)):
                                      "measurement_scope": r["params"]["observation_scope"]}
         m["provenance"] = {"source_kind": "synthetic", "plant": "simulation.plant (evaluator truth)",
                            "advisory_id": r["active_advisory_id"], "computed_at": iso(now())}
+        if sess["role"] == "manager":  # simulator truth is evaluator-only
+            return {"counts": m["counts"], "observation_coverage": m["observation_coverage"],
+                    "provenance": {**m["provenance"], "plant": None},
+                    "scope": "manager: counts and coverage only; truth-based outcomes are operator/evaluator views"}
         return m
 
 

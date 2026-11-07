@@ -79,6 +79,16 @@ Fairness tests: `test_experiment_fairness_properties` checks perfect-execution t
 A single aggregate meter that is checked against claims catches most false EV claims in this synthetic setup, because a zero reading contradicts them. Branch meters only add value when loads overlap, and the gain is small here. Branch policies use 2 electrical meters versus 1; costs are unknown until the BOM. This is no claim about any real BESCOM meter's delay or capability.
 - Live HTTP was not re-run after this change. The API was exercised in-process by `scripts/demo_flow.py` and pytest.
 
+## Response to Sonia's review (main 7e4edfb, after PRs #4 and #5)
+- Merge order: #4 merged before #5, so main has the sensing fields.
+- **Defect fixed:** unlocked reads on the shared SQLite connection. All statements in `backend/db.py` now take the reentrant `LOCK`.
+  - The new regression test (4 threads × 400 reads) failed before the fix (399/400) and passed 3 of 3 runs after it.
+  - Live HTTP check, 4 workers × 400 authorized `GET /operator/state`: 400 × 200.
+- OpenBLAS out-of-memory at first forecast load: `backend/__init__.py` and `forecasting/__init__.py` now default `OPENBLAS_NUM_THREADS=1`. I couldn't reproduce the original crash on this machine, so the fix follows Sonia's report.
+- Unknown `apartment_params` keys are rejected (422); that was the root cause of the silent branch fallback on old main. Manager report is scoped, aggregate remaining energy is null, and `execution_history` and `GET /runs` were added (CONTRACT.md "Follow-ups").
+- Checks: `pytest` 22 passed. Sonia's `node --test tests/ui/ui.test.js` passed 8, and her `tests/ui/e2e_flow.cjs` passed 18 of 18 against this backend; playwright-core was installed in a scratch folder, not the repo.
+- **Still not run:** a physical phone over plain HTTP on the LAN (`python app.py --host 0.0.0.0`). This needs both of us before the demo. The experiments comparison view is Sonia's next piece.
+
 ## Next
 - Hardware adapter, once the real inventory and calibration exist (Teammate 3). Raw bench units stay separate; scaling will be labelled scaled_hardware.
 - Optionally widen the ridge alpha grid; add outage/restart and wrong-forecast scenarios.
