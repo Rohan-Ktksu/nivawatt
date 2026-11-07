@@ -1,6 +1,6 @@
 # False-done trace (emulated device, real API)
 
-Run `run-b3fb36e79b`. A ridge forecast for 2026-08-19 produced an operator-approved advisory, and the apartment plan was accepted.
+Run `run-ed81c048f5`. A ridge forecast for 2026-08-19 produced an operator-approved advisory, and the apartment plan was accepted.
 The device emulator (`simulation/device_emulator.py`, reference profile `apartment_reference_v1`) posted one reading per second; each step closed a 15-minute model interval.
 In interval 1 the manager reported done while every switch was left off.
 

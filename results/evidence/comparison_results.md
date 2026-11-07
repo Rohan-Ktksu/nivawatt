@@ -1,6 +1,6 @@
 # Simulated policy comparison
 
-Source: `results/experiments/exp-default/` (generated at commit `1512d28`, 20 seeds per stochastic scenario). **Synthetic simulation, not bench evidence.**
+Source: `results/experiments/exp-default/` (generated at commit `78707ce`, 20 seeds per stochastic scenario). **Synthetic simulation, not bench evidence.**
 
 Mean per run. EV = energy short at departure (model kWh). Reserve = 15-min intervals below the water reserve. Peak = participating energy inside advisory hours (model kWh).
 
@@ -12,6 +12,9 @@ Mean per run. EV = energy short at departure (model kWh). Reserve = 15-min inter
 | extra_withdrawal | EV | 0 | 0 | 0 | 0 | 0 | 0 |
 | extra_withdrawal | Reserve | 0 | 0 | 3.8 | 0.8 | 0.8 | 0.8 |
 | extra_withdrawal | Peak | 0 | 0 | 0 | 0 | 0 | 0 |
+| honest_misses | EV | 0 | 0 | 2.9463 | 0 | 0 | 0 |
+| honest_misses | Reserve | 0 | 0 | 0 | 0 | 0 | 0 |
+| honest_misses | Peak | 0 | 0 | 0 | 0 | 0 | 0 |
 | infeasible_ev | EV | 13.6 | 13.6 | 13.6 | 13.6 | 13.6 | 13.6 |
 | infeasible_ev | Reserve | 0 | 0 | 0 | 0 | 0 | 0 |
 | infeasible_ev | Peak | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -24,6 +27,12 @@ Mean per run. EV = energy short at departure (model kWh). Reserve = 15-min inter
 | missed_pump_false_done | EV | 0 | 0 | 0 | 0 | 0 | 0 |
 | missed_pump_false_done | Reserve | 0 | 0 | 57 | 3.15 | 3.15 | 3.15 |
 | missed_pump_false_done | Peak | 0 | 0 | 0 | 0.165 | 0.165 | 0.165 |
+| noisy_late_sensors_false_done | EV | 0 | 0 | 1.7862 | 1.7862 | 0 | 0.005 |
+| noisy_late_sensors_false_done | Reserve | 0 | 0 | 0 | 0.35 | 0.3 | 0.1 |
+| noisy_late_sensors_false_done | Peak | 0 | 0 | 0 | 0 | 0 | 0 |
+| noisy_sensors_mixed_reports | EV | 0 | 0 | 1.7862 | 0.745 | 0.01 | 0.005 |
+| noisy_sensors_mixed_reports | Reserve | 0 | 0 | 23.35 | 1.15 | 1.2 | 0.95 |
+| noisy_sensors_mixed_reports | Peak | 0 | 0 | 0 | 0.0275 | 0.0275 | 0.0275 |
 | perfect | EV | 0 | 0 | 0 | 0 | 0 | 0 |
 | perfect | Reserve | 0 | 0 | 0 | 0 | 0 | 0 |
 | perfect | Peak | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -37,15 +46,37 @@ Mean per run. EV = energy short at departure (model kWh). Reserve = 15-min inter
 |---|---|---|
 | daytime_ev_tight_allowance | 20 / 0 / 0 | 0 / 20 / 0 |
 | extra_withdrawal | 0 / 20 / 0 | 0 / 20 / 0 |
+| honest_misses | 0 / 20 / 0 | 0 / 20 / 0 |
 | infeasible_ev | 0 / 1 / 0 | 0 / 1 / 0 |
 | missed_ev_false_done | 20 / 0 / 0 | 1 / 19 / 0 |
 | missed_ev_overlapping_pump | 20 / 0 / 0 | 7 / 13 / 0 |
 | missed_pump_false_done | 0 / 20 / 0 | 0 / 20 / 0 |
+| noisy_late_sensors_false_done | 19 / 1 / 0 | 0 / 19 / 1 |
+| noisy_sensors_mixed_reports | 17 / 3 / 0 | 2 / 17 / 1 |
 | perfect | 0 / 1 / 0 | 0 / 1 / 0 |
 | stale_telemetry | 18 / 2 / 0 | 8 / 12 / 0 |
 
+## Cost of replanning (proposals the manager would be asked to accept)
+
+| Scenario | Plans computed per run: fixed_plan / ack_replan / aggregate_replan / measured_replan | Replans with no missed action (sensor noise or a real disturbance): fixed_plan / ack_replan / aggregate_replan / measured_replan |
+|---|---|---|
+| daytime_ev_tight_allowance | 1 / 1 / 3.7 / 3.7 | 0 / 0 / 0 / 0 |
+| extra_withdrawal | 1 / 14.75 / 14.75 / 14.75 | 0 / 13.75 / 13.75 / 13.75 |
+| honest_misses | 1 / 7 / 7 / 7 | 0 / 0 / 0 / 0 |
+| infeasible_ev | 1 / 1 / 1 / 1 | 0 / 0 / 0 / 0 |
+| missed_ev_false_done | 1 / 1 / 6.95 / 7 | 0 / 0 / 0 / 0 |
+| missed_ev_overlapping_pump | 1 / 1 / 6.55 / 7 | 0 / 0 / 0 / 0 |
+| missed_pump_false_done | 1 / 4.3 / 4.3 / 4.3 | 0 / 0 / 0 / 0 |
+| noisy_late_sensors_false_done | 1 / 22.25 / 25.8 / 41.4 | 0 / 20.8 / 21 / 34.5 |
+| noisy_sensors_mixed_reports | 1 / 30.5 / 32.1 / 44.8 | 0 / 26.8 / 26.6 / 36.6 |
+| perfect | 1 / 1 / 1 / 1 | 0 / 0 / 0 / 0 |
+| stale_telemetry | 1 / 35.35 / 37.05 / 48.4 | 0 / 33.4 / 33.3 / 42.25 |
+
 ## Reading this honestly
 
+- Most scenarios use ideal sensors and a person who always reports done after skipping. Under those assumptions checking sensors must win: treat those rows as a logic check, not proof.
+- honest_misses: when people admit skipped actions, acknowledgement replanning ties measured replanning in every seed.
+- noisy_* scenarios add power and tank noise, EV-meter dropouts, late readings and mixed honesty. Measured replanning still reduces EV shortfall, but it replans far more often, many times with no missed action (false alarms from noise). A single aggregate meter reaches similar shortfall with fewer replans in the late-reading case.
 - With perfect execution every policy ties; the advantage comes only from catching false or missed actions.
 - Missed pump actions tie between acknowledgement and measured replanning because both see the same tank level.
 - With stale telemetry the fixed plan beats both replanners on water: stale tank readings mislead replanning.

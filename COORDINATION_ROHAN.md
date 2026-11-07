@@ -128,6 +128,16 @@ Checked 7 Nov 2026 on an emulator-created run in Chrome at 390 px: the manager p
 
 Not yet run end to end with a person typing at the prompt.
 
+## Imperfect-sensing scenarios (response to review: "the big win is built into the assumptions")
+The original comparison used ideal sensors and a person who always reports done, so measurement had to win. `exp-default` now adds:
+- `honest_misses`: acknowledgement **ties** measured in 20/20 seeds.
+- `noisy_sensors_mixed_reports`: measured is still better on EV (17 better / 3 ties / 0 worse) but computes 44.8 plans per run vs 30.5, of which 36.6 follow no missed action.
+- `noisy_late_sensors_false_done`: measured 0.005 and aggregate 0 kWh EV shortfall vs 1.79 for acknowledgement; aggregate needs fewer replans (25.8 vs 41.4).
+
+Earlier scenarios are unchanged (0 differences). Present it as: "With ideal sensors, measured feedback catches every false report. With noise it still helps, but it triggers more replans; real sensor noise and delay are not yet measured."
+
+Sonia: the comparison screen will list the three new scenario names and two new metrics (`plans_computed`, `replans_without_missed_action`). Please add plain-language labels.
+
 ## Next
 - Hardware adapter, once the real inventory and calibration exist (Teammate 3). Raw bench units stay separate; scaling will be labelled scaled_hardware.
 - Optionally widen the ridge alpha grid; add outage/restart and wrong-forecast scenarios.
