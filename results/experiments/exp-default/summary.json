@@ -1,8 +1,8 @@
 {
   "experiment_id": "exp-default",
   "source_kind": "synthetic_simulation",
-  "software_commit": "07a6e8152e120f53c66d7157f42e3221fc6c60d9",
-  "generated_at": "2026-11-07T06:29:46Z",
+  "software_commit": "1512d288b2728dbd7096a6fb74dfd8403c0415e1",
+  "generated_at": "2026-11-07T06:49:30Z",
   "config": {
     "peak_intervals": [
       40,
@@ -68,6 +68,16 @@
           ]
         }
       },
+      "missed_ev_overlapping_pump": {
+        "p_miss_pump": 0,
+        "p_miss_ev": 0.3,
+        "p_drop": 0,
+        "stochastic": true,
+        "params": {
+          "tank_init_l": 3200,
+          "allowance_model_kw": 6.0
+        }
+      },
       "infeasible_ev": {
         "p_miss_pump": 0,
         "p_miss_ev": 0,
@@ -90,7 +100,8 @@
       "demand_cap",
       "fixed_plan",
       "ack_replan",
-      "measured_replan"
+      "measured_replan",
+      "aggregate_replan"
     ]
   },
   "summary": {
@@ -250,6 +261,37 @@
           "sd": 0.0
         }
       },
+      "aggregate_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 8,
+          "sd": 0.0
+        }
+      },
       "paired_measured_minus_ack": {
         "peak_participating_model_kw": {
           "mean": 0.0,
@@ -257,7 +299,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "allowance_exceedance_model_kwh": {
           "mean": 0.0,
@@ -265,7 +307,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "peak_window_energy_model_kwh": {
           "mean": 0.0,
@@ -273,7 +315,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "reserve_violation_intervals": {
           "mean": 0,
@@ -281,7 +323,7 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "unmet_withdrawal_l": {
           "mean": 0.0,
@@ -289,7 +331,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "ev_shortfall_model_kwh": {
           "mean": -1.3375,
@@ -297,7 +339,7 @@
           "max": -0.1,
           "measured_better_runs": 20,
           "ties": 0,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "pump_starts": {
           "mean": 0,
@@ -305,7 +347,65 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
+        }
+      },
+      "paired_branch_minus_aggregate": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
         }
       }
     },
@@ -465,6 +565,37 @@
           "sd": 0.3
         }
       },
+      "aggregate_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0.8,
+          "sd": 0.9274
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 7.9,
+          "sd": 0.3
+        }
+      },
       "paired_measured_minus_ack": {
         "peak_participating_model_kw": {
           "mean": 0.0,
@@ -472,7 +603,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "allowance_exceedance_model_kwh": {
           "mean": 0.0,
@@ -480,7 +611,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "peak_window_energy_model_kwh": {
           "mean": 0.0,
@@ -488,7 +619,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "reserve_violation_intervals": {
           "mean": 0,
@@ -496,7 +627,7 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "unmet_withdrawal_l": {
           "mean": 0.0,
@@ -504,7 +635,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "ev_shortfall_model_kwh": {
           "mean": 0,
@@ -512,7 +643,7 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "pump_starts": {
           "mean": 0,
@@ -520,7 +651,65 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
+        }
+      },
+      "paired_branch_minus_aggregate": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
         }
       }
     },
@@ -680,6 +869,37 @@
           "sd": 0.0
         }
       },
+      "aggregate_replan": {
+        "runs": 1,
+        "peak_participating_model_kw": {
+          "mean": 5.5,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 13.6,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 8,
+          "sd": 0.0
+        }
+      },
       "paired_measured_minus_ack": {
         "peak_participating_model_kw": {
           "mean": 0.0,
@@ -687,7 +907,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "allowance_exceedance_model_kwh": {
           "mean": 0.0,
@@ -695,7 +915,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "peak_window_energy_model_kwh": {
           "mean": 0.0,
@@ -703,7 +923,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "reserve_violation_intervals": {
           "mean": 0,
@@ -711,7 +931,7 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "unmet_withdrawal_l": {
           "mean": 0.0,
@@ -719,7 +939,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "ev_shortfall_model_kwh": {
           "mean": 0.0,
@@ -727,7 +947,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "pump_starts": {
           "mean": 0,
@@ -735,7 +955,65 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
+        }
+      },
+      "paired_branch_minus_aggregate": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
         }
       }
     },
@@ -895,6 +1173,37 @@
           "sd": 0.0
         }
       },
+      "aggregate_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.41,
+          "sd": 0.4795
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0.005,
+          "sd": 0.0218
+        },
+        "pump_starts": {
+          "mean": 8,
+          "sd": 0.0
+        }
+      },
       "paired_measured_minus_ack": {
         "peak_participating_model_kw": {
           "mean": 0.11,
@@ -902,7 +1211,7 @@
           "max": 2.2,
           "measured_better_runs": 0,
           "ties": 19,
-          "ack_better_runs": 1
+          "baseline_better_runs": 1
         },
         "allowance_exceedance_model_kwh": {
           "mean": 0.0,
@@ -910,7 +1219,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "peak_window_energy_model_kwh": {
           "mean": 0.0,
@@ -918,7 +1227,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "reserve_violation_intervals": {
           "mean": 0,
@@ -926,7 +1235,7 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "unmet_withdrawal_l": {
           "mean": 0.0,
@@ -934,7 +1243,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "ev_shortfall_model_kwh": {
           "mean": -2.9463,
@@ -942,7 +1251,7 @@
           "max": -0.1,
           "measured_better_runs": 20,
           "ties": 0,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "pump_starts": {
           "mean": 0,
@@ -950,7 +1259,369 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
+        }
+      },
+      "paired_branch_minus_aggregate": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": -0.005,
+          "min": -0.1,
+          "max": 0,
+          "measured_better_runs": 1,
+          "ties": 19,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        }
+      }
+    },
+    "missed_ev_overlapping_pump": {
+      "uncoordinated": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 5.5,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 2,
+          "sd": 0.0
+        }
+      },
+      "demand_cap": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 5.5,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 2,
+          "sd": 0.0
+        }
+      },
+      "fixed_plan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 4.84,
+          "sd": 1.0082
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 2.9463,
+          "sd": 1.4636
+        },
+        "pump_starts": {
+          "mean": 9,
+          "sd": 0.0
+        }
+      },
+      "ack_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 4.84,
+          "sd": 1.0082
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 2.9463,
+          "sd": 1.4636
+        },
+        "pump_starts": {
+          "mean": 9,
+          "sd": 0.0
+        }
+      },
+      "measured_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 4.84,
+          "sd": 1.0082
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 9,
+          "sd": 0.0
+        }
+      },
+      "aggregate_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 4.84,
+          "sd": 1.0082
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0.035,
+          "sd": 0.0477
+        },
+        "pump_starts": {
+          "mean": 9,
+          "sd": 0.0
+        }
+      },
+      "paired_measured_minus_ack": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": -2.9463,
+          "min": -5.875,
+          "max": -0.1,
+          "measured_better_runs": 20,
+          "ties": 0,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        }
+      },
+      "paired_branch_minus_aggregate": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": -0.035,
+          "min": -0.1,
+          "max": 0,
+          "measured_better_runs": 7,
+          "ties": 13,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
         }
       }
     },
@@ -1110,6 +1781,37 @@
           "sd": 0.3571
         }
       },
+      "aggregate_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.165,
+          "sd": 0.252
+        },
+        "reserve_violation_intervals": {
+          "mean": 3.15,
+          "sd": 1.9564
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 7.85,
+          "sd": 0.3571
+        }
+      },
       "paired_measured_minus_ack": {
         "peak_participating_model_kw": {
           "mean": 0.0,
@@ -1117,7 +1819,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "allowance_exceedance_model_kwh": {
           "mean": 0.0,
@@ -1125,7 +1827,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "peak_window_energy_model_kwh": {
           "mean": 0.0,
@@ -1133,7 +1835,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "reserve_violation_intervals": {
           "mean": 0,
@@ -1141,7 +1843,7 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "unmet_withdrawal_l": {
           "mean": 0.0,
@@ -1149,7 +1851,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "ev_shortfall_model_kwh": {
           "mean": 0,
@@ -1157,7 +1859,7 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "pump_starts": {
           "mean": 0,
@@ -1165,7 +1867,65 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
+        }
+      },
+      "paired_branch_minus_aggregate": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
         }
       }
     },
@@ -1325,6 +2085,37 @@
           "sd": 0.0
         }
       },
+      "aggregate_replan": {
+        "runs": 1,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "sd": 0.0
+        },
+        "pump_starts": {
+          "mean": 8,
+          "sd": 0.0
+        }
+      },
       "paired_measured_minus_ack": {
         "peak_participating_model_kw": {
           "mean": 0.0,
@@ -1332,7 +2123,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "allowance_exceedance_model_kwh": {
           "mean": 0.0,
@@ -1340,7 +2131,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "peak_window_energy_model_kwh": {
           "mean": 0.0,
@@ -1348,7 +2139,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "reserve_violation_intervals": {
           "mean": 0,
@@ -1356,7 +2147,7 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "unmet_withdrawal_l": {
           "mean": 0.0,
@@ -1364,7 +2155,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "ev_shortfall_model_kwh": {
           "mean": 0,
@@ -1372,7 +2163,7 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "pump_starts": {
           "mean": 0,
@@ -1380,7 +2171,65 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 1,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
+        }
+      },
+      "paired_branch_minus_aggregate": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 1,
+          "baseline_better_runs": 0
         }
       }
     },
@@ -1540,6 +2389,37 @@
           "sd": 1.0296
         }
       },
+      "aggregate_replan": {
+        "runs": 20,
+        "peak_participating_model_kw": {
+          "mean": 3.3,
+          "sd": 0.0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "reserve_violation_intervals": {
+          "mean": 1.65,
+          "sd": 1.5898
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": 0.04,
+          "sd": 0.049
+        },
+        "pump_starts": {
+          "mean": 6.8,
+          "sd": 1.0296
+        }
+      },
       "paired_measured_minus_ack": {
         "peak_participating_model_kw": {
           "mean": 0.0,
@@ -1547,7 +2427,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "allowance_exceedance_model_kwh": {
           "mean": 0.0,
@@ -1555,7 +2435,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "peak_window_energy_model_kwh": {
           "mean": 0.0,
@@ -1563,7 +2443,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "reserve_violation_intervals": {
           "mean": 0,
@@ -1571,7 +2451,7 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "unmet_withdrawal_l": {
           "mean": 0.0,
@@ -1579,7 +2459,7 @@
           "max": 0.0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "ev_shortfall_model_kwh": {
           "mean": -1.2038,
@@ -1587,7 +2467,7 @@
           "max": 0,
           "measured_better_runs": 18,
           "ties": 2,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
         },
         "pump_starts": {
           "mean": 0,
@@ -1595,12 +2475,70 @@
           "max": 0,
           "measured_better_runs": 0,
           "ties": 20,
-          "ack_better_runs": 0
+          "baseline_better_runs": 0
+        }
+      },
+      "paired_branch_minus_aggregate": {
+        "peak_participating_model_kw": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "allowance_exceedance_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "peak_window_energy_model_kwh": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "reserve_violation_intervals": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "unmet_withdrawal_l": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
+        },
+        "ev_shortfall_model_kwh": {
+          "mean": -0.04,
+          "min": -0.1,
+          "max": 0,
+          "measured_better_runs": 8,
+          "ties": 12,
+          "baseline_better_runs": 0
+        },
+        "pump_starts": {
+          "mean": 0,
+          "min": 0,
+          "max": 0,
+          "measured_better_runs": 0,
+          "ties": 20,
+          "baseline_better_runs": 0
         }
       }
     }
   },
-  "notes": "Paired policy comparison on the synthetic apartment (simulation only; not a bench result).\n\nPolicies\n- uncoordinated (automatic_local): float-switch pump, EV charges on arrival until full. Context only.\n- demand_cap (automatic_local): same, but EV pauses whenever pump+EV would exceed the allowance (water priority).\n- fixed_plan (human_advisory): one rules plan at t=0, never revised.\n- ack_replan (human_advisory): rules scheduler; tank from observations; EV progress credited from done claims.\n- measured_replan (human_advisory): same scheduler and same tank observations; EV progress from measured EV energy.\n\nShared across policies within a seed: plant parameters, withdrawal disturbance, advisory peak intervals, and the\nhuman-response draws (a miss for interval i / action kind applies to whichever policy issues that action).\nThe human claims done for every instructed ON action, including missed ones (false done). Policies never see truth.\nAutomatic policies are a different authority class: they are not subject to human misses.",
+  "notes": "Paired policy comparison on the synthetic apartment (simulation only; not a bench result).\n\nPolicies\n- uncoordinated (automatic_local): float-switch pump, EV charges on arrival until full. Context only.\n- demand_cap (automatic_local): same, but EV pauses whenever pump+EV would exceed the allowance (water priority).\n- fixed_plan (human_advisory): one rules plan at t=0, never revised.\n- ack_replan (human_advisory): rules scheduler; tank from observations; EV progress credited from done claims.\n- measured_replan (human_advisory): same scheduler and same tank observations; EV progress from measured EV energy.\n- aggregate_replan (human_advisory): same scheduler and tank observations, but only one meter on the combined\n  participating circuits. EV progress = claimed energy, withdrawn only where the aggregate reading is zero\n  (claim contradicted). It never attributes energy to an individual EV from the aggregate (observability variant).\n\nShared across policies within a seed: plant parameters, withdrawal disturbance, advisory peak intervals, and the\nhuman-response draws (a miss for interval i / action kind applies to whichever policy issues that action).\nThe human claims done for every instructed ON action, including missed ones (false done). Policies never see truth.\nAutomatic policies are a different authority class: they are not subject to human misses.",
   "limitations": [
     "synthetic plant and human-response model; not field or bench evidence",
     "automatic_local policies have different control authority than human_advisory ones",
