@@ -1,0 +1,15 @@
+{
+  "stepped_interval": 2,
+  "execution": {
+    "commitment_id": "c-4ad89a4877",
+    "interval_index": 2,
+    "observation_status": "AMBIGUOUS",
+    "reason": "AGGREGATE_ONLY_BRANCH_UNATTRIBUTED"
+  },
+  "late_execution": {
+    "commitment_id": "c-4ad89a4877",
+    "interval_index": 1,
+    "observation_status": "AMBIGUOUS",
+    "reason": "AGGREGATE_ONLY_BRANCH_UNATTRIBUTED (late reading)"
+  }
+}

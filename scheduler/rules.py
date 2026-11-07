@@ -84,7 +84,7 @@ def plan(current_state, known_events, requirements, constraints):
         ev_traj[s["ev_id"]] = traj
 
     loads = [load(i) for i in idx]
-    starts, prev = 0, st.get("pump_on", False)
+    starts, prev = 0, bool(st.get("pump_on"))  # unknown pump state counts as OFF for planned starts
     for i in idx:
         starts += pump[i] and not prev
         prev = pump[i]
@@ -100,7 +100,7 @@ def plan(current_state, known_events, requirements, constraints):
         "ev_energy_trajectory_model_kwh": ev_traj,
         "ev_shortfall_model_kwh": shortfall,
         "water_shortfall": {"intervals_below_reserve": len(viol), "unmet_withdrawal_l": round(unmet_water, 1)},
-        "pump_starts": {"history": st.get("pump_starts_history", 0), "planned": starts},
+        "pump_starts": {"history": st.get("pump_starts_history"), "planned": starts},  # history None = not measurable
         "requires_operator_exception": False,
         "assumptions": ["expected withdrawal profile is a planning estimate",
                         "source water available unless a known outage event says otherwise",

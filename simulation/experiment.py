@@ -6,6 +6,9 @@ Policies
 - fixed_plan (human_advisory): one rules plan at t=0, never revised.
 - ack_replan (human_advisory): rules scheduler; tank from observations; EV progress credited from done claims.
 - measured_replan (human_advisory): same scheduler and same tank observations; EV progress from measured EV energy.
+- aggregate_replan (human_advisory): same scheduler and tank observations, but only one meter on the combined
+  participating circuits. EV progress = claimed energy, withdrawn only where the aggregate reading is zero
+  (claim contradicted). It never attributes energy to an individual EV from the aggregate (observability variant).
 
 Shared across policies within a seed: plant parameters, withdrawal disturbance, advisory peak intervals, and the
 human-response draws (a miss for interval i / action kind applies to whichever policy issues that action).
@@ -30,7 +33,10 @@ from simulation import plant
 from simulation.metrics import run_metrics
 
 ROOT = Path(__file__).resolve().parent.parent
-POLICIES = ["uncoordinated", "demand_cap", "fixed_plan", "ack_replan", "measured_replan"]
+POLICIES = ["uncoordinated", "demand_cap", "fixed_plan", "ack_replan", "measured_replan", "aggregate_replan"]
+# Electrical meters each policy relies on (tank sensor common to the advisory ones). Prices unknown until the BOM exists.
+ELECTRICAL_METERS = {"uncoordinated": 0, "demand_cap": 2, "fixed_plan": 0, "ack_replan": 0, "measured_replan": 2,
+                     "aggregate_replan": 1}
 SCENARIOS = {
     "perfect": {"p_miss_pump": 0, "p_miss_ev": 0, "p_drop": 0, "stochastic": False},
     "missed_ev_false_done": {"p_miss_pump": 0, "p_miss_ev": 0.3, "p_drop": 0, "stochastic": True},
@@ -42,6 +48,9 @@ SCENARIOS = {
                                    "params": {"allowance_model_kw": 4.0,
                                               "ev_sessions": [{"ev_id": "EV_1", "arrival_interval": 36,
                                                                "departure_interval": 72, "requested_model_kwh": 10}]}},
+    # Pump and EV overlap (low tank, daytime EV) so non-zero aggregate readings cannot reveal a missed EV action.
+    "missed_ev_overlapping_pump": {"p_miss_pump": 0, "p_miss_ev": 0.3, "p_drop": 0, "stochastic": True,
+                                   "params": {"tank_init_l": 3200, "allowance_model_kw": 6.0}},
     "infeasible_ev": {"p_miss_pump": 0, "p_miss_ev": 0, "p_drop": 0, "stochastic": False,
                       "params": {"ev_sessions": [{"ev_id": "EV_1", "arrival_interval": 0, "departure_interval": 32,
                                                   "requested_model_kwh": 40}]}},
@@ -103,6 +112,11 @@ def run_policy(policy, base_p, truth_withdrawal, draws, scen, peaks):
         if policy == "measured_replan":
             if not dropped and rec["ev_id"]:
                 credited[rec["ev_id"]] += rec["ev_model_kw"] * dt_h  # no credit without a measurement
+        elif policy == "aggregate_replan" and plan_opt is not None:
+            if want_ev and (dropped or rec["aggregate_model_kw"] > 0):  # a zero reading contradicts the claim
+                e = a["ev"]
+                sess = next(s for s in base_p["ev_sessions"] if s["ev_id"] == e)
+                credited[e] = min(sess["requested_model_kwh"], credited[e] + base_p["ev_charger_model_kw"] * dt_h)
         elif policy in ("ack_replan", "fixed_plan") and plan_opt is not None:
             if want_ev:  # human claims every instructed action as done
                 e = a["ev"]
@@ -110,6 +124,7 @@ def run_policy(policy, base_p, truth_withdrawal, draws, scen, peaks):
                 credited[e] = min(sess["requested_model_kwh"], credited[e] + base_p["ev_charger_model_kw"] * dt_h)
     m = run_metrics(p_true, log, set(peaks))
     m.update({"plans_computed": plans, "deviations_detected": deviations_seen, "missed_ev_actions": missed_ev_actions,
+              "electrical_meters": ELECTRICAL_METERS[policy],
               "authority": "automatic_local" if policy in ("uncoordinated", "demand_cap") else "human_advisory"})
     return m
 
@@ -138,6 +153,7 @@ def run(scenarios=None, policies=None, n_seeds=20, peaks=None, params=None):
             for pol in policies:
                 m = run_policy(pol, p, w, d, scen, peaks)
                 rows.append({"scenario": sname, "seed": seed, "policy": pol, "authority": m["authority"],
+                             "electrical_meters": m["electrical_meters"],
                              "peak_participating_model_kw": m["peak_participating_model_kw"],
                              "allowance_exceedance_model_kwh": m["allowance_exceedance_model_kwh"],
                              "peak_window_energy_model_kwh": m["peak_window_energy_model_kwh"],
@@ -163,14 +179,15 @@ def summarize(rows):
             rs = [r for r in rows if r["scenario"] == s and r["policy"] == pol]
             out[s][pol] = {"runs": len(rs), **{m: {"mean": round(statistics.mean(r[m] for r in rs), 4),
                                                    "sd": round(statistics.pstdev(r[m] for r in rs), 4)} for m in METRICS}}
-        a = {r["seed"]: r for r in rows if r["scenario"] == s and r["policy"] == "ack_replan"}
-        b = {r["seed"]: r for r in rows if r["scenario"] == s and r["policy"] == "measured_replan"}
-        if a and b:
-            diffs = {m: [b[k][m] - a[k][m] for k in a if k in b] for m in METRICS}
-            out[s]["paired_measured_minus_ack"] = {
-                m: {"mean": round(statistics.mean(v), 4), "min": round(min(v), 4), "max": round(max(v), 4),
-                    "measured_better_runs": sum(x < -1e-9 for x in v), "ties": sum(abs(x) <= 1e-9 for x in v),
-                    "ack_better_runs": sum(x > 1e-9 for x in v)} for m, v in diffs.items()}
+        for name, base in (("paired_measured_minus_ack", "ack_replan"), ("paired_branch_minus_aggregate", "aggregate_replan")):
+            a = {r["seed"]: r for r in rows if r["scenario"] == s and r["policy"] == base}
+            b = {r["seed"]: r for r in rows if r["scenario"] == s and r["policy"] == "measured_replan"}
+            if a and b:
+                diffs = {m: [b[k][m] - a[k][m] for k in a if k in b] for m in METRICS}
+                # negative = measured_replan (branch meters) lower, i.e. better for these lower-is-better metrics
+                out[s][name] = {m: {"mean": round(statistics.mean(v), 4), "min": round(min(v), 4), "max": round(max(v), 4),
+                                    "measured_better_runs": sum(x < -1e-9 for x in v), "ties": sum(abs(x) <= 1e-9 for x in v),
+                                    "baseline_better_runs": sum(x > 1e-9 for x in v)} for m, v in diffs.items()}
     return out
 
 

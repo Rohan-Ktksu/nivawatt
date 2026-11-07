@@ -78,3 +78,17 @@ if __name__ == "__main__":
     save("operator_state.json", call("GET", f"/operator/state?run_id={run}", op))
     save("report.json", call("GET", f"/runs/{run}/report", op))
     print("false-done verdict -> revision executed verdict:", out["execution"]["observation_status"])
+    # aggregate-only metering example: same loop, one combined meter (tank sensor still separate)
+    run2 = call("POST", "/runs", op, request_id="d-r2", clock_start_utc=fs,
+                apartment_params={"observation_scope": "aggregate"})["run_id"]
+    p2 = call("POST", "/requirements", mg, run_id=run2, request_id="d-q2", ev_sessions=[])["proposal"]
+    s2 = call("POST", f"/proposals/{p2['proposal_id']}/decision", mg, run_id=run2, expected_revision=p2["revision"],
+              decision="ACCEPT", option_id="o1", request_id="d-acc3")
+    a0 = s2["active_commitment"]["option"]["actions"][0]
+    out = call("POST", f"/runs/{run2}/step", op, request_id="d-agg",
+               actual_switches={"pump": a0["pump"], "ev": "ON" if a0["ev"] != "OFF" else "OFF"})
+    save("state_5_aggregate_only_ambiguous.json", out["state"])
+    out = call("POST", f"/runs/{run2}/step", op, request_id="d-late", delay_observation=True)
+    save("state_6_reading_in_transit.json", out["state"])
+    out = call("POST", f"/runs/{run2}/step", op, request_id="d-late2")
+    save("step_7_late_reading_arrived.json", {k: out[k] for k in ("stepped_interval", "execution", "late_execution")})

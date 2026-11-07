@@ -1,6 +1,6 @@
 {
   "schema_version": "0.2",
-  "run_id": "run-621a868aae",
+  "run_id": "run-9f72ca3fbe",
   "revision": 3,
   "mode": "advisory",
   "clock": {
@@ -32,12 +32,12 @@
     ]
   },
   "active_commitment": {
-    "commitment_id": "c-0caef49ed8",
-    "proposal_id": "p-baedddb70d",
+    "commitment_id": "c-f9af53aae1",
+    "proposal_id": "p-c320bb620f",
     "option_id": "o1",
     "status": "ACCEPTED",
     "effective_from_interval": 0,
-    "accepted_at": "2026-11-07T06:24:57Z",
+    "accepted_at": "2026-11-07T06:49:20Z",
     "option": {
       "option_id": "o1",
       "label": "Rules schedule: water reserve first, then EV energy, outside peak windows when possible",
@@ -746,23 +746,24 @@
   },
   "pending_proposals": [
     {
-      "proposal_id": "p-e2d83714a4",
-      "run_id": "run-621a868aae",
+      "proposal_id": "p-1b3c4c11d5",
+      "run_id": "run-9f72ca3fbe",
       "apartment_id": "APT_1",
       "revision": 3,
       "status": "PROPOSED",
       "reason": "CLAIM_WITHOUT_OBSERVED_EXECUTION",
       "source": "rules",
-      "computation_ms": 1.18,
-      "created_at": "2026-11-07T06:24:57Z",
-      "expires_at": "2026-11-07T06:39:57Z",
-      "advisory_id": "ev-8901de4529",
-      "forecast_id": "fc-1c712d1172",
+      "computation_ms": 4.28,
+      "created_at": "2026-11-07T06:49:20Z",
+      "expires_at": "2026-11-07T07:04:20Z",
+      "advisory_id": "ev-002cb27711",
+      "forecast_id": "fc-2b76934f36",
       "planning_inputs": {
         "interval_index": 1,
         "tank_l": 4440.0,
         "tank_source": "observation",
         "stale": false,
+        "aggregate_only": false,
         "pump_on": false,
         "pump_starts_history": 0,
         "ev_delivered_observed_model_kwh": {
@@ -1474,20 +1475,22 @@
   ],
   "observation": {
     "interval_index": 0,
+    "received_at_interval": 0,
     "quality": "VALID",
     "source_kind": "synthetic",
+    "measurement_scope": "branch",
     "tank_l": 4440.0,
+    "aggregate_model_kw": 0.0,
+    "received_at": "2026-11-07T06:49:20Z",
     "pump_model_kw": 0.0,
     "ev_model_kw": 0.0,
     "ev_id": null,
-    "aggregate_model_kw": 0.0,
     "branch_attribution": "SYNTHETIC_KNOWN",
-    "received_at": "2026-11-07T06:24:57Z",
     "model_power_kw": 0.0,
     "raw_bench": null
   },
   "execution": {
-    "commitment_id": "c-0caef49ed8",
+    "commitment_id": "c-f9af53aae1",
     "interval_index": 0,
     "claim": "CLAIMED_EXECUTED",
     "observation_status": "OBSERVED_DEVIATION",
@@ -1495,8 +1498,8 @@
     "claims": [
       {
         "interval_index": 0,
-        "action_id": "c-0caef49ed8:0:ev",
-        "claimed_at": "2026-11-07T06:24:57Z"
+        "action_id": "c-f9af53aae1:0:ev",
+        "claimed_at": "2026-11-07T06:49:20Z"
       }
     ],
     "next_action": {
@@ -1514,19 +1517,20 @@
     "verified_ev_delivered_model_kwh": 0.0,
     "verified_ev_delivered_by_ev_model_kwh": {
       "EV_1": 0.0
-    }
+    },
+    "verified_ev_unavailable_reason": null
   },
   "warnings": [
     "SYNTHETIC apartment simulation. Not a field measurement.",
     "Regional forecast and advisory do not establish local transformer or apartment capacity."
   ],
-  "forecast_id": "fc-1c712d1172",
+  "forecast_id": "fc-2b76934f36",
   "active_advisory": {
-    "advisory_id": "ev-8901de4529",
-    "event_id": "ev-8901de4529",
+    "advisory_id": "ev-002cb27711",
+    "event_id": "ev-002cb27711",
     "kind": "peak_advisory",
-    "run_id": "run-621a868aae",
-    "forecast_id": "fc-1c712d1172",
+    "run_id": "run-9f72ca3fbe",
+    "forecast_id": "fc-2b76934f36",
     "approved_by_demo_operator": "demo-operator",
     "geographic_scope": "Karnataka state grid (KPTCL). Not BESCOM feeder, transformer or apartment demand.",
     "valid_from": "2026-08-18T18:30:00Z",
@@ -1551,6 +1555,6 @@
     "source_kind": "historical_replay",
     "known_from_interval": 0,
     "_note": "Prototype peak advisory from a regional forecast. Not a BESCOM instruction or a capacity limit.",
-    "issued_at": "2026-11-07T06:24:57Z"
+    "issued_at": "2026-11-07T06:49:20Z"
   }
 }

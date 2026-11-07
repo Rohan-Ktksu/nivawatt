@@ -17,6 +17,9 @@ DEFAULT_PARAMS = {
     # Planning estimate == synthetic truth here; experiments may add disturbances to truth only.
     "withdrawal_profile_l": None,
     "source_outage_intervals": [],
+    # branch: pump and EV branches metered separately; aggregate: one meter on the participating circuits.
+    # The tank-level sensor is independent of either and is present in both.
+    "observation_scope": "branch",
     "ev_sessions": [{"ev_id": "EV_1", "arrival_interval": 0, "departure_interval": 32, "requested_model_kwh": 10}],
 }
 
@@ -39,6 +42,8 @@ def make_params(overrides=None):
         raise ValueError("withdrawal_profile_l length must equal horizon_intervals")
     if not 0 <= p["tank_min_l"] <= p["tank_max_l"] or not 0 <= p["tank_init_l"] <= p["tank_max_l"]:
         raise ValueError("tank bounds invalid")
+    if p["observation_scope"] not in ("branch", "aggregate"):
+        raise ValueError("observation_scope must be branch or aggregate")
     for k in ("pump_inflow_lph", "pump_model_kw", "ev_charger_model_kw", "allowance_model_kw"):
         if p[k] < 0:
             raise ValueError(f"{k} must be >= 0")

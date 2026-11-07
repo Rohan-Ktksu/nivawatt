@@ -316,12 +316,14 @@ def test_experiment_fairness_properties():
     rows, summary, _ = experiment.run(n_seeds=5)
     pm = lambda s, m: summary[s]["paired_measured_minus_ack"][m]
     # perfect truthful execution: measured and acknowledgement replanning tie
-    assert all(v["ties"] == v["measured_better_runs"] + v["ack_better_runs"] + v["ties"]
+    assert all(v["ties"] == v["measured_better_runs"] + v["baseline_better_runs"] + v["ties"]
                for v in summary["perfect"]["paired_measured_minus_ack"].values())
     # pump misses are visible to both through the same tank observations
     assert pm("missed_pump_false_done", "reserve_violation_intervals")["ties"] == 5
+    # aggregate-only metering never beats branch metering on EV shortfall (it can only see less)
+    assert summary["missed_ev_overlapping_pump"]["paired_branch_minus_aggregate"]["ev_shortfall_model_kwh"]["baseline_better_runs"] == 0
     # false done on EV: acknowledgement never beats measurement on EV shortfall
-    assert pm("missed_ev_false_done", "ev_shortfall_model_kwh")["ack_better_runs"] == 0
+    assert pm("missed_ev_false_done", "ev_shortfall_model_kwh")["baseline_better_runs"] == 0
     # infeasible request: shortfall visible for every policy, no fake completion
     assert all(r["ev_shortfall_model_kwh"] > 0 for r in rows if r["scenario"] == "infeasible_ev")
     # physical bounds in every run
@@ -334,5 +336,60 @@ def test_experiment_api(api):
     assert c.post("/api/v1/experiments", headers=c.mgr, json=body).status_code == 403
     r = c.post("/api/v1/experiments", headers=c.op, json=body).json()
     doc = c.get(f"/api/v1/experiments/{r['experiment_id']}", headers=c.op).json()
-    assert doc["status"] == "COMPLETED" and doc["source_kind"] == "synthetic_simulation" and len(doc["runs"]) == r["runs"] == 20
+    assert doc["status"] == "COMPLETED" and doc["source_kind"] == "synthetic_simulation" and len(doc["runs"]) == r["runs"] == 24
     assert c.post("/api/v1/experiments", headers=c.op, json={**body, "request_id": "e2", "policies": ["magic"]}).status_code == 422
+
+
+# ---------- sensing scope and freshness (SMART_METER_EVIDENCE cases A-D) ----------
+def accepted_run(c, **params):
+    run = new_run(c, **params)
+    p = c.post("/api/v1/requirements", headers=c.mgr, json={"run_id": run, "request_id": f"q-{run}", "ev_sessions": []}).json()["proposal"]
+    assert accept(c, run, p, f"a-{run}").status_code == 200
+    return run, state(c, run)["active_commitment"]["option"]["actions"]
+
+
+def test_aggregate_only_is_ambiguous_and_gives_no_ev_credit(api):
+    c = api
+    run, acts = accepted_run(c, observation_scope="aggregate")
+    a0 = acts[0]
+    assert a0["ev"] != "OFF"  # default EV is present from interval 0
+    out = step(c, run, "s0", actual_switches={"pump": a0["pump"], "ev": "ON"})
+    assert out["execution"]["observation_status"] == "AMBIGUOUS"
+    s = out["state"]
+    assert s["observation"]["branch_attribution"] == "AMBIGUOUS" and s["observation"]["ev_model_kw"] is None
+    assert s["readiness"]["verified_ev_delivered_model_kwh"] is None
+    assert s["readiness"]["verified_ev_unavailable_reason"].startswith("AGGREGATE_ONLY")
+    assert s["readiness"]["charging_status"] == "UNVERIFIED"
+    assert not s["pending_proposals"]  # ambiguity is not treated as a deviation
+    # zero aggregate while something is instructed is a supported deviation
+    out = step(c, run, "s1", actual_switches={"pump": "OFF", "ev": "OFF"})
+    if acts[1]["pump"] == "ON" or acts[1]["ev"] != "OFF":
+        assert out["execution"]["reason"] == "NO_PARTICIPATING_LOAD_OBSERVED"
+
+
+def test_aggregate_pump_without_water_uses_tank_sensor(api):
+    c = api
+    run, acts = accepted_run(c, observation_scope="aggregate", source_outage_intervals=list(range(96)), tank_init_l=3100,
+                             ev_sessions=[])
+    k = next(a["interval_index"] for a in acts if a["pump"] == "ON")
+    for j in range(k):
+        step(c, run, f"s{j}", actual_switches={"pump": "OFF", "ev": "OFF"})
+    out = step(c, run, "sk", actual_switches={"pump": "ON", "ev": "OFF"})
+    assert out["execution"]["observation_status"] == "OBSERVED_DEVIATION"
+    assert out["execution"]["reason"] == "PUMP_WATER_DELIVERY_NOT_OBSERVED"
+
+
+def test_late_reading_keeps_gap_then_arrives_marked_late(api):
+    c = api
+    run, acts = accepted_run(c)
+    out = step(c, run, "s0", delay_observation=True, actual_switches={"pump": "OFF", "ev": "OFF"})
+    assert out["execution"]["observation_status"] == "STALE"
+    assert out["state"]["observation"]["quality"] == "STALE" and out["state"]["observation"]["aggregate_model_kw"] is None
+    out = step(c, run, "s1")
+    late = out["late_execution"]
+    assert late["interval_index"] == 0 and "(late reading)" in late["reason"]
+    from backend import db
+    o0 = json.loads(db.one("SELECT body FROM observations WHERE run_id=? AND interval_index=0", run)["body"])
+    assert o0["quality"] == "LATE" and o0["received_at_interval"] == 1 and o0["interval_index"] == 0
+    assert c.post(f"/api/v1/runs/{run}/step", headers=c.op,
+                  json={"request_id": "bad", "drop_observation": True, "delay_observation": True}).status_code == 422
