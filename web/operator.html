@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NivaWatt demonstration operator</title>
+  <link rel="stylesheet" href="/web/style.css">
+</head>
+<body>
+  <div class="sim-banner"><p>Demonstration operator. Not a BESCOM or KPTCL system, and not connected to one.</p></div>
+  <header class="masthead">
+    <h1>Demonstration operator</h1>
+    <p class="meta" id="meta"></p>
+  </header>
+  <main>
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <section class="panel" id="signin" hidden>
+      <h2>Sign in</h2>
+      <p class="muted">Local demonstration access, not a production login.</p>
+      <form id="signin-form">
+        <label class="field">Operator access code <input type="password" id="access-code" required autocomplete="off"></label>
+        <button class="primary" type="submit">Sign in</button>
+      </form>
+    </section>
+
+    <div class="stack" id="app" hidden>
+      <section class="panel">
+        <h2>Regional forecast</h2>
+        <form id="forecast-form">
+          <div class="columns">
+            <label class="field">Forecast model
+              <select id="model">
+                <option value="ridge_lag_calendar">Fitted ridge regression</option>
+                <option value="seasonal_naive">Seasonal baseline (same hour last week)</option>
+              </select>
+            </label>
+            <label class="field">Day starting (UTC, must be 00:00 IST)
+              <input type="text" id="forecast-start" required autocomplete="off">
+            </label>
+          </div>
+          <button class="primary" type="submit">Load saved forecast</button>
+        </form>
+        <div id="forecast"></div>
+      </section>
+
+      <div class="columns wide-left">
+        <div class="stack">
+          <section class="panel" id="advisory"></section>
+          <section class="panel" id="apartments"></section>
+          <section class="panel" id="report"></section>
+        </div>
+        <div class="stack">
+          <section class="panel">
+            <h2>Demonstration run</h2>
+            <p class="muted">Each run is one synthetic apartment, starting at the forecast day.</p>
+            <label class="field">Scenario
+              <select id="scenario">
+                <option value="branch">Separate pump and charger meters</option>
+                <option value="aggregate">One combined meter only</option>
+                <option value="dry">Water source fails: pump draws power, tank does not fill</option>
+              </select>
+            </label>
+            <div class="buttons"><button id="create-run" type="button">Start new run</button></div>
+            <div id="run-link"></div>
+          </section>
+          <section class="panel" id="sim" hidden>
+            <h2>Simulation control</h2>
+            <p class="muted">Stands in for a person at the switches. Accepting a plan never moves these.</p>
+            <div id="due"></div>
+            <fieldset><legend>Pump switch</legend>
+              <label class="choice"><input type="radio" name="pump" value="OFF" checked> Off</label>
+              <label class="choice"><input type="radio" name="pump" value="ON"> On</label>
+            </fieldset>
+            <fieldset><legend>Charger switch</legend>
+              <label class="choice"><input type="radio" name="ev" value="OFF" checked> Off</label>
+              <label class="choice"><input type="radio" name="ev" value="ON"> On</label>
+            </fieldset>
+            <fieldset><legend>Sensor reading for this interval</legend>
+              <label class="choice"><input type="radio" name="reading" value="normal" checked> Arrives on time</label>
+              <label class="choice"><input type="radio" name="reading" value="delayed"> Arrives one interval late</label>
+              <label class="choice"><input type="radio" name="reading" value="missing"> Never arrives</label>
+            </fieldset>
+            <div class="buttons">
+              <button id="match-plan" type="button">Set switches to the accepted plan</button>
+              <button class="primary" id="step" type="button">Advance one interval</button>
+            </div>
+            <div id="step-result"></div>
+          </section>
+        </div>
+      </div>
+      <p><button type="button" id="sign-out">Sign out</button></p>
+    </div>
+  </main>
+  <script src="/web/ui.js"></script>
+  <script src="/web/api.js"></script>
+  <script src="/web/operator.js"></script>
+</body>
+</html>

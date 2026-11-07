@@ -1,0 +1,149 @@
+/* System fonts only: the demo must work with no internet at the venue. */
+:root {
+  --paper: #e6ecea;
+  --panel: #ffffff;
+  --ink: #12333b;
+  --ink-soft: #47606a;
+  --line: #b9c7c6;
+  --water: #2484ab;
+  --water-deep: #125a78;
+  --peak: #b86e00;
+  --good: #1d6b3c;
+  --good-bg: #e0f1e6;
+  --bad: #a22c1b;
+  --bad-bg: #fbe6e1;
+  --warn: #7f4b00;
+  --warn-bg: #fdf0d6;
+  --unknown: #3f4f70;
+  --unknown-bg: #e6e9f3;
+  --sim: #4b2e83;
+  --sim-bg: #ece6f7;
+  --display: Bahnschrift, 'DIN Alternate', 'Roboto Condensed', 'Arial Narrow', sans-serif;
+  --body: 'Segoe UI', Roboto, system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 1rem/1.5 var(--body); }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; margin: 0; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.25rem; margin-bottom: .5rem; }
+h3 { font-size: 1.05rem; margin-bottom: .25rem; }
+p { margin: 0 0 .5rem; max-width: 70ch; }
+ul { margin: 0 0 .5rem; padding-left: 1.2rem; }
+a { color: var(--water-deep); }
+code { font-size: .875em; overflow-wrap: anywhere; }
+:focus-visible { outline: 3px solid var(--water-deep); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+.sim-banner { background: var(--sim); color: #fff; padding: .5rem 1rem; font-weight: 600; }
+.sim-banner p { margin: 0; max-width: none; }
+.masthead { padding: 1rem 1rem .5rem; max-width: 76rem; margin: auto; }
+.masthead .meta { color: var(--ink-soft); font-size: .875rem; margin-top: .25rem; overflow-wrap: anywhere; }
+main { max-width: 76rem; margin: auto; padding: 0 1rem 3rem; display: grid; gap: 1rem; }
+.columns { display: grid; gap: 1rem; align-items: start; }
+.stack { display: grid; gap: 1rem; align-content: start; min-width: 0; }
+@media (min-width: 56rem) {
+  .columns { grid-template-columns: 1fr 1fr; }
+  .columns.wide-left { grid-template-columns: 3fr 2fr; }
+}
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 1rem; min-width: 0; }
+.muted { color: var(--ink-soft); font-size: .875rem; }
+.big { font: 600 1.75rem/1.1 var(--display); }
+
+/* Controls: large enough for a thumb, and the three kinds of action never look alike. */
+button, select, input[type='text'], input[type='password'], input[type='number'] {
+  font: inherit; min-height: 3rem; border-radius: 4px;
+}
+input[type='text'], input[type='password'], input[type='number'], select {
+  width: 100%; padding: .5rem .75rem; border: 1px solid var(--ink-soft); background: #fff; color: var(--ink);
+}
+label.field { display: block; font-weight: 600; margin-bottom: .75rem; }
+label.field input, label.field select { margin-top: .25rem; font-weight: 400; }
+.choice { display: flex; align-items: center; gap: .5rem; min-height: 2.75rem; }
+.choice input { width: 1.25rem; height: 1.25rem; flex: none; margin: 0; }
+fieldset { border: 1px solid var(--line); border-radius: 4px; margin: 0 0 .75rem; padding: .5rem .75rem; min-width: 0; }
+legend { font-weight: 600; padding: 0 .25rem; }
+
+button { padding: .5rem 1rem; font-weight: 600; cursor: pointer; border: 2px solid var(--ink); background: #fff; color: var(--ink); }
+button:disabled { opacity: .55; cursor: not-allowed; }
+button.primary { background: var(--water-deep); border-color: var(--water-deep); color: #fff; }
+button.decline { border-color: var(--bad); color: var(--bad); }
+button.claim { background: var(--warn-bg); border: 2px dashed var(--warn); color: var(--warn); }
+.buttons { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
+.buttons button { flex: 1 1 11rem; }
+
+/* Status always carries an icon and words, never colour alone. */
+.chip { display: inline-flex; align-items: baseline; gap: .375rem; padding: .125rem .5rem; border-radius: 4px; font-weight: 600; font-size: .9375rem; }
+.tone-good { background: var(--good-bg); color: var(--good); }
+.tone-bad { background: var(--bad-bg); color: var(--bad); }
+.tone-warn { background: var(--warn-bg); color: var(--warn); }
+.tone-unknown { background: var(--unknown-bg); color: var(--unknown); }
+.notice { padding: .625rem .75rem; border-radius: 4px; margin-bottom: .75rem; border-left: 4px solid currentColor; }
+.notice:last-child { margin-bottom: 0; }
+.notice p { margin: 0; color: inherit; }
+#toast { position: sticky; top: 0; z-index: 2; margin: 0; }
+#toast:empty { display: none; }
+
+.facts { display: grid; grid-template-columns: minmax(7rem, auto) 1fr; gap: .25rem .75rem; margin: 0 0 .5rem; }
+.facts dt { color: var(--ink-soft); font-size: .875rem; padding-top: .1rem; }
+.facts dd { margin: 0; overflow-wrap: anywhere; min-width: 0; }
+
+/* Next action */
+.next { background: var(--ink); color: #fff; border-color: var(--ink); }
+.next .big { margin: .25rem 0 .5rem; }
+.next .label { color: #c8d8d9; font-size: .9375rem; }
+.next p { margin-bottom: .25rem; }
+
+/* The report and the reading are two independent records, so they sit side by side, not in one status. */
+.ledger { display: grid; grid-template-columns: 1fr 1fr; border: 2px solid var(--ink); border-radius: 4px; margin-bottom: .75rem; }
+.ledger > div { padding: .75rem; min-width: 0; }
+.ledger > div + div { border-left: 2px solid var(--ink); }
+.ledger h3 { font-size: 1rem; }
+.ledger .said { background: var(--warn-bg); }
+@media (max-width: 26rem) {
+  .ledger { grid-template-columns: 1fr; }
+  .ledger > div + div { border-left: 0; border-top: 2px solid var(--ink); }
+}
+
+/* Tank: a vertical water column with its reserve line. */
+.tank-row { display: flex; gap: 1rem; align-items: stretch; }
+.tank { position: relative; flex: none; width: 4.5rem; height: 11rem; border: 2px solid var(--ink); border-top-width: 1px; border-radius: 0 0 6px 6px; background: #f3f6f6; overflow: hidden; }
+.tank .water { position: absolute; left: 0; right: 0; bottom: 0; background: var(--water); }
+.tank .reserve { position: absolute; left: 0; right: 0; border-top: 2px dashed var(--ink); }
+.tank.unknown .water { background: repeating-linear-gradient(45deg, #b9c7c6 0 6px, #e6ecea 6px 12px); }
+
+/* Schedule strip: one cell per upcoming interval. */
+.strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr)); gap: 2px; margin: .25rem 0 .75rem; }
+.strip div { padding: .25rem; font-size: .75rem; background: #eef2f2; line-height: 1.25; }
+.strip b { display: block; }
+.strip .peak { box-shadow: inset 0 -3px 0 var(--peak); }
+
+/* Forecast chart */
+.chart { display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; height: 11rem; align-items: end; margin-top: .5rem; border-bottom: 1px solid var(--ink-soft); }
+.bar { position: relative; height: 100%; display: flex; align-items: flex-end; background: none; border: 0; padding: 0; min-height: 0; border-radius: 0; }
+.bar i { display: block; width: 100%; background: var(--water); border-radius: 4px 4px 0 0; }
+.bar.peak i { background: var(--peak); }
+.bar b { position: absolute; left: -1px; right: -1px; border-top: 3px solid var(--ink); }
+.bar:hover i, .bar:focus-visible i { opacity: .75; }
+.axis { display: flex; justify-content: space-between; font-size: .75rem; color: var(--ink-soft); margin-bottom: .25rem; }
+.legend { display: flex; flex-wrap: wrap; gap: .25rem 1rem; font-size: .875rem; margin: .5rem 0; }
+.legend span::before { content: ''; display: inline-block; width: .75rem; height: .75rem; margin-right: .375rem; background: var(--water); }
+.legend .l-peak::before { background: var(--peak); }
+.legend .l-actual::before { height: 3px; vertical-align: middle; background: var(--ink); }
+.readout { min-height: 1.5rem; font-weight: 600; }
+
+table { border-collapse: collapse; width: 100%; font-size: .875rem; }
+th, td { text-align: left; padding: .25rem .5rem .25rem 0; border-bottom: 1px solid var(--line); }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+.scroll { overflow-x: auto; }
+details > summary { cursor: pointer; font-weight: 600; min-height: 2.75rem; display: flex; align-items: center; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .tank .water { transition: height .4s ease; }
+}
+@media (forced-colors: active) {
+  .bar i, .tank .water { background: CanvasText; }
+  .bar.peak i { background: Highlight; }
+}
